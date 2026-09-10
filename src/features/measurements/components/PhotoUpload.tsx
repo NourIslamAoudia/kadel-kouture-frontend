@@ -1,4 +1,5 @@
 import { useCallback, useRef, useState } from "react";
+import type { Gender } from "../types";
 export type ShotId = "front" | "side";
 
 export interface Shot {
@@ -10,6 +11,7 @@ export interface Shot {
 interface Props {
   onComplete: (shots: Record<ShotId, Shot>) => void;
   onCancel: () => void;
+  gender?: Gender;
   initialShots?: Partial<Record<ShotId, Shot>>;
 }
 
@@ -157,6 +159,7 @@ function PhotoCard({
 export default function PhotoUpload({
   onComplete,
   onCancel,
+  gender = "neutral",
   initialShots = {},
 }: Props) {
   const [shots, setShots] =
@@ -179,6 +182,10 @@ export default function PhotoUpload({
     });
   };
   const ready = Boolean(shots.front && shots.side);
+  const example =
+    gender === "female"
+      ? { src: "/demo-2.jpg", label: "Exemple modèle femme" }
+      : { src: "/demo-1.png", label: "Exemple modèle homme" };
   return (
     <div className="photo-upload">
       <div className="upload-intro">
@@ -192,6 +199,27 @@ export default function PhotoUpload({
         </div>
         <span className="upload-count">
           {ready ? "2 / 2" : `${shots.front ? 1 : 0} / 2`}
+        </span>
+      </div>
+      <div className="photo-examples">
+        <div className="photo-examples-heading">
+          <strong>Exemples de photos attendues</strong>
+          <span>Votre pose doit ressembler à cet exemple</span>
+        </div>
+        <div className="photo-examples-grid">
+          <figure>
+            <img src={example.src} alt={example.label} />
+            <figcaption>{example.label}</figcaption>
+          </figure>
+        </div>
+      </div>
+      <div className="upload-guidance">
+        <ImageIcon />
+        <span>
+          <strong>Important pour un meilleur résultat</strong> · prenez une
+          photo de face et une photo de profil, avec le corps entier visible.
+          Portez des vêtements ajustés, près du corps, et non des vêtements
+          larges.
         </span>
       </div>
       <div className="photo-upload-grid">
@@ -211,13 +239,6 @@ export default function PhotoUpload({
           onSelect={(file) => save("side", file)}
           onRemove={() => remove("side")}
         />
-      </div>
-      <div className="upload-guidance">
-        <ImageIcon />
-        <span>
-          <strong>Pour une meilleure précision</strong> · corps entier visible,
-          vêtements près du corps, arrière-plan uni et bonne lumière.
-        </span>
       </div>
       <div className="upload-footer">
         <button className="back-button" type="button" onClick={onCancel}>

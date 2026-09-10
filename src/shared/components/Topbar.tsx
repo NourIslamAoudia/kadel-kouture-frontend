@@ -10,7 +10,7 @@ export default function Topbar({ step, totalSteps, onBack, canGoBack }: Props) {
 
   return (
     <div className="sticky top-0 z-10 bg-[rgba(253,251,248,0.96)] backdrop-blur-md">
-      <div className="flex items-center justify-between px-[18px] py-3">
+      <div className="relative flex items-center justify-between px-[18px] py-3">
         {canGoBack ? (
           <button
             type="button"
@@ -24,11 +24,17 @@ export default function Topbar({ step, totalSteps, onBack, canGoBack }: Props) {
           <span />
         )}
 
-        <img
-          src="/logo.png"
-          alt="Kadel Kouture"
-          className="h-9 w-auto max-w-[150px] object-contain"
-        />
+        {canGoBack ? (
+          <img
+            src="/logo.png"
+            alt="Kadel Kouture"
+            className="absolute left-1/2 h-9 w-auto max-w-[150px] -translate-x-1/2 object-contain"
+          />
+        ) : (
+          <span className="absolute left-1/2 -translate-x-1/2 whitespace-nowrap font-serif text-lg italic text-gold">
+            Kadel Kouture
+          </span>
+        )}
 
         <span className="text-[11px] uppercase tracking-[0.1em] text-ink-3">
           {step} / {totalSteps}

@@ -59,7 +59,7 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
       <div className="flex min-h-[260px] flex-col items-center justify-center text-center">
         <p className="font-serif text-2xl text-ink">Analyse en cours…</p>
         <p className="mt-2 text-sm text-ink-3">
-          Le moteur calcule vos mesures et prépare le modèle 3D.
+          Le moteur calcule vos mesures.
         </p>
       </div>
     );
@@ -77,7 +77,7 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
         </h2>
         <p className="mt-2 text-[13px] leading-relaxed text-ink-3">
           Ajoutez une photo de face et une photo de profil. Le moteur retournera
-          vos mesures et un modèle 3D.
+          vos mesures.
         </p>
       </div>
 
@@ -108,7 +108,11 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
         </label>
       </div>
 
-      <PhotoUpload onComplete={runExtraction} onCancel={() => undefined} />
+      <PhotoUpload
+        gender={gender}
+        onComplete={runExtraction}
+        onCancel={() => undefined}
+      />
 
       {error && <p className="text-sm text-red-600">{error}</p>}
     </div>
