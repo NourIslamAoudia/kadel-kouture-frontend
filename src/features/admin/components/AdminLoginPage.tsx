@@ -19,12 +19,21 @@ export default function AdminLoginPage() {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const normalizedEmail = email.trim();
+    if (!/^\S+@\S+\.\S+$/.test(normalizedEmail)) {
+      setError("Saisissez une adresse email valide.");
+      return;
+    }
+    if (password.length < 8) {
+      setError("Le mot de passe doit contenir au moins 8 caractères.");
+      return;
+    }
     setLoading(true);
     setError("");
     try {
       const { data, error: loginError } =
         await supabase.auth.signInWithPassword({
-          email,
+          email: normalizedEmail,
           password,
         });
       if (loginError || !data.user) {

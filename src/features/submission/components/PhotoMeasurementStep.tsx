@@ -19,11 +19,16 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
   const [error, setError] = useState<string | null>(null);
 
   const runExtraction = async (shots: Record<ShotId, Shot>) => {
+    const height = Number(heightCm);
+    if (!Number.isFinite(height) || height < 100 || height > 230) {
+      setError("La taille doit être comprise entre 100 et 230 cm.");
+      return;
+    }
     setProcessing(true);
     setError(null);
     try {
       const response = await extractMeasurements({
-        heightMm: Number(heightCm) * 10,
+        heightMm: height * 10,
         gender,
         frontImage: shots.front.blob,
         sideImage: shots.side.blob,
@@ -83,6 +88,7 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
             type="number"
             min="100"
             max="230"
+            step="1"
             value={heightCm}
             onChange={(event) => setHeightCm(event.target.value)}
             className="mt-1 w-full rounded-lg border border-gold/20 bg-white px-3 py-2 text-sm text-ink outline-none focus:border-gold"

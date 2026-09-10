@@ -68,32 +68,60 @@ export default function OrderFlow() {
   const currentIndex = STEP_ORDER.indexOf(step);
   const totalSteps = STEP_ORDER.length;
 
-  const canGoNext = (): boolean => {
-    switch (step) {
-      case "garment":
-        return (
-          garmentType !== null &&
-          (garmentType !== "autre" || garmentOther.trim() !== "")
-        );
-      case "work":
-        return workType !== null;
-      case "method":
-        return method !== null;
-      case "measurements":
-        return method === "photo"
-          ? photoResult !== null
-          : Object.values(manual).every((v) => v.trim() !== "");
-      case "client":
-        return (
-          client.fullName.trim() !== "" &&
-          client.phone.trim() !== "" &&
-          client.email.trim() !== ""
-        );
-      case "zone":
-        return zone !== null && dropOffPoint !== null;
-      default:
-        return true;
+  const validationMessage = (): string | null => {
+    if (step === "garment" && !garmentType)
+      return "Choisissez un type de vêtement.";
+    if (step === "garment" && garmentType === "autre" && !garmentOther.trim()) {
+      return "Précisez le type de vêtement.";
     }
+    if (step === "work" && !workType) return "Choisissez le type de travail.";
+    if (step === "method" && !method)
+      return "Choisissez une méthode de mesure.";
+    if (step === "measurements" && method === "photo" && !photoResult) {
+      return "Ajoutez les deux photos et lancez l’analyse.";
+    }
+    if (step === "measurements" && method === "manual") {
+      const limits = {
+        chest: [30, 250],
+        waist: [30, 250],
+        hips: [30, 250],
+        height: [100, 230],
+        shoulders: [10, 100],
+        sleeve: [20, 150],
+      } as const;
+      const invalid = (Object.keys(manual) as Array<keyof typeof manual>).some(
+        (field) => {
+          const value = manual[field];
+          const number = Number(value);
+          const [minimum, maximum] = limits[field];
+          return (
+            !value.trim() ||
+            !Number.isFinite(number) ||
+            number < minimum ||
+            number > maximum
+          );
+        },
+      );
+      if (invalid)
+        return "Vérifiez vos mesures : les valeurs doivent être réalistes et en cm.";
+    }
+    if (step === "client") {
+      if (!client.fullName.trim()) return "Saisissez votre nom complet.";
+      if (!/^[+\d][\d\s().-]{7,}$/.test(client.phone.trim())) {
+        return "Saisissez un numéro de téléphone valide.";
+      }
+      if (!/^\S+@\S+\.\S+$/.test(client.email.trim())) {
+        return "Saisissez une adresse email valide.";
+      }
+    }
+    if (step === "zone" && (!zone || !dropOffPoint)) {
+      return "Choisissez une zone et un point de dépôt.";
+    }
+    return null;
+  };
+
+  const canGoNext = (): boolean => {
+    return validationMessage() === null;
   };
 
   const goNext = async () => {
@@ -220,7 +248,11 @@ export default function OrderFlow() {
           />
         )}
 
-        {error && <p className="mt-4 text-sm text-red-600">{error}</p>}
+        {(error || validationMessage()) && (
+          <p className="mt-4 text-sm text-red-600" role="alert">
+            {error ?? validationMessage()}
+          </p>
+        )}
       </div>
 
       {!(step === "measurements" && method === "photo" && !photoResult) && (
