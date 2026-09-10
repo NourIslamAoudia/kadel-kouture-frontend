@@ -209,6 +209,324 @@ body {
   line-height: 1.6;
 }
 
+.admin-dashboard-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 20px;
+  max-width: 1120px;
+  margin: 34px auto 28px;
+}
+
+.admin-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: 20px;
+  font-style: italic;
+}
+
+.admin-dashboard-heading p {
+  margin-top: 10px;
+  color: var(--color-ink-3);
+  font-size: 13px;
+}
+
+.admin-total {
+  display: grid;
+  min-width: 110px;
+  border: 1px solid rgb(184 147 90 / 18%);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 80%);
+  padding: 14px 18px;
+  text-align: center;
+}
+
+.admin-total strong {
+  color: var(--color-gold);
+  font-family: var(--font-serif);
+  font-size: 30px;
+  font-weight: 500;
+}
+
+.admin-total span {
+  color: var(--color-ink-3);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.admin-toolbar {
+  display: flex;
+  gap: 10px;
+  max-width: 1120px;
+  margin: 0 auto 16px;
+}
+
+.admin-toolbar input,
+.admin-toolbar select {
+  border: 1px solid rgb(184 147 90 / 22%);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--color-ink);
+  outline: none;
+  padding: 11px 13px;
+}
+
+.admin-toolbar input {
+  flex: 1;
+}
+
+.admin-toolbar input:focus,
+.admin-toolbar select:focus,
+.admin-status-control select:focus {
+  border-color: var(--color-gold);
+  box-shadow: 0 0 0 3px rgb(184 147 90 / 10%);
+}
+
+.admin-page-error,
+.admin-loading {
+  max-width: 1120px;
+  margin: 18px auto;
+}
+
+.admin-loading {
+  color: var(--color-ink-3);
+  font-size: 13px;
+  text-align: center;
+}
+
+.admin-submissions {
+  display: grid;
+  gap: 12px;
+  max-width: 1120px;
+  margin: 42px auto 0;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid rgb(184 147 90 / 18%);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 88%);
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  border-bottom: 1px solid rgb(184 147 90 / 16%);
+  color: var(--color-ink-3);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  padding: 13px 16px;
+  text-transform: uppercase;
+}
+
+.admin-table td {
+  border-bottom: 1px solid rgb(184 147 90 / 10%);
+  color: var(--color-ink-2);
+  font-size: 12px;
+  padding: 15px 16px;
+  vertical-align: middle;
+}
+
+.admin-table tbody tr {
+  cursor: pointer;
+  transition: background 140ms ease;
+}
+
+.admin-table tbody tr:hover,
+.admin-table tbody tr:focus {
+  background: var(--color-gold-pale-2);
+  outline: none;
+}
+
+.admin-table td strong,
+.admin-table td span {
+  display: block;
+}
+
+.admin-table td strong {
+  color: var(--color-ink);
+  font-weight: 500;
+}
+
+.admin-table td span {
+  margin-top: 4px;
+  color: var(--color-ink-3);
+  font-size: 11px;
+}
+
+.status-badge {
+  display: inline-block !important;
+  width: max-content;
+  border-radius: 999px;
+  font-size: 10px !important;
+  margin-top: 0 !important;
+  padding: 5px 9px;
+}
+
+.status-pending { background: #f5edd8; color: #a77d35 !important; }
+.status-in_progress { background: #e7f0f5; color: #47758c !important; }
+.status-completed { background: #e4f2e8; color: #4e8a61 !important; }
+.status-cancelled { background: #f5e6e4; color: #a45b52 !important; }
+
+.admin-modal-backdrop {
+  position: fixed;
+  z-index: 30;
+  inset: 0;
+  display: flex;
+  justify-content: flex-end;
+  background: rgb(44 36 22 / 28%);
+}
+
+.admin-detail-panel {
+  position: relative;
+  width: min(100%, 460px);
+  height: 100%;
+  overflow-y: auto;
+  background: var(--color-bg);
+  box-shadow: -12px 0 40px rgb(44 36 22 / 12%);
+  padding: 44px 28px 28px;
+}
+
+.admin-detail-close {
+  position: absolute;
+  top: 16px;
+  right: 20px;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink-3);
+  cursor: pointer;
+  font-size: 27px;
+}
+
+.admin-detail-panel h2 {
+  margin-top: 8px;
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: 34px;
+  font-weight: 500;
+}
+
+.admin-detail-date {
+  color: var(--color-ink-3);
+  font-size: 11px;
+  margin-top: 4px;
+}
+
+.admin-status-control {
+  display: grid;
+  gap: 7px;
+  margin-top: 26px;
+  color: var(--color-ink-2);
+  font-size: 11px;
+}
+
+.admin-status-control select {
+  border: 1px solid rgb(184 147 90 / 24%);
+  border-radius: 9px;
+  background: #fff;
+  color: var(--color-ink);
+  outline: none;
+  padding: 11px 12px;
+}
+
+.admin-detail-list {
+  display: grid;
+  gap: 0;
+  margin-top: 22px;
+}
+
+.admin-detail-list div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  border-bottom: 1px solid rgb(184 147 90 / 12%);
+  padding: 11px 0;
+}
+
+.admin-detail-list dt,
+.admin-comment span,
+.admin-measurements > span {
+  color: var(--color-ink-3);
+  font-size: 11px;
+}
+
+.admin-detail-list dd {
+  color: var(--color-ink);
+  font-size: 12px;
+  text-align: right;
+}
+
+.admin-comment,
+.admin-measurements {
+  margin-top: 22px;
+}
+
+.admin-comment p {
+  margin-top: 7px;
+  color: var(--color-ink-2);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.admin-measurements pre {
+  overflow: auto;
+  margin-top: 7px;
+  border-radius: 8px;
+  background: #2c2416;
+  color: #f5edd8;
+  font-size: 11px;
+  padding: 12px;
+}
+
+.admin-submission-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid rgb(184 147 90 / 18%);
+  border-radius: 14px;
+  background: rgb(255 255 255 / 88%);
+  padding: 18px 20px;
+}
+
+.admin-submission-card h2 {
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.admin-submission-card p,
+.admin-submission-meta {
+  color: var(--color-ink-3);
+  font-size: 12px;
+}
+
+.admin-submission-meta {
+  display: grid;
+  gap: 5px;
+  text-align: right;
+}
+
+.admin-submission-meta strong {
+  justify-self: end;
+  border-radius: 999px;
+  background: var(--color-gold-pale);
+  color: var(--color-gold);
+  font-size: 10px;
+  font-weight: 500;
+  padding: 5px 9px;
+  text-transform: uppercase;
+}
+
 @media (max-width: 520px) {
   .admin-auth-panel {
     padding: 34px 22px 26px;
@@ -223,6 +541,35 @@ body {
     align-items: flex-end;
     flex-direction: column;
     gap: 7px;
+  }
+
+  .admin-submission-card {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .admin-dashboard-heading {
+    align-items: flex-start;
+    flex-direction: column;
+    margin-top: 42px;
+  }
+
+  .admin-toolbar {
+    flex-direction: column;
+  }
+
+  .admin-table th,
+  .admin-table td {
+    padding-inline: 11px;
+    white-space: nowrap;
+  }
+
+  .admin-submission-meta {
+    text-align: left;
+  }
+
+  .admin-submission-meta strong {
+    justify-self: start;
   }
 }
 
