@@ -212,7 +212,7 @@ L'application est disponible sur `http://localhost:5173`.
 Créer un fichier `.env` à la racine du projet :
 
 ```env
-VITE_API_URL=http://localhost:3000/api
+VITE_API_Base_URL=http://localhost:3000/api
 VITE_SOCKET_URL=http://localhost:3000
 VITE_MAPBOX_TOKEN=xxxxx
 VITE_STRIPE_PUBLIC_KEY=xxxxx

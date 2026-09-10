@@ -1,6 +1,3 @@
-//@feature/submission/types.ts
-import type { ExtractionResponse } from "@features/measurements/types";
-
 export type GarmentType =
   "pantalon" | "veste" | "robe" | "chemise" | "manteau" | "autre";
 export type WorkType =

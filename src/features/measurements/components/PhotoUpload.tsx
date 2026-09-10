@@ -1,5 +1,11 @@
 import { useCallback, useRef, useState } from "react";
-import type { Shot, ShotId } from "./CameraCapture";
+export type ShotId = "front" | "side";
+
+export interface Shot {
+  id: ShotId;
+  blob: Blob;
+  previewUrl: string;
+}
 
 interface Props {
   onComplete: (shots: Record<ShotId, Shot>) => void;

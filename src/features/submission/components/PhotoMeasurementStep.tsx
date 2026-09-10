@@ -1,11 +1,10 @@
 import { useState } from "react";
-import PhotoUpload from "@features/measurements/components/PhotoUpload";
+import PhotoUpload, {
+  type Shot,
+  type ShotId,
+} from "@features/measurements/components/PhotoUpload";
 import MeasurementSheet from "@features/measurements/components/MeasurementSheet";
 import { extractMeasurements } from "@features/measurements/api";
-import type {
-  Shot,
-  ShotId,
-} from "@features/measurements/components/CameraCapture";
 import type { ExtractionResponse, Gender } from "@features/measurements/types";
 
 interface Props {
