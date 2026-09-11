@@ -4,9 +4,10 @@ import { useAuth } from "@features/auth/context/AuthContext";
 import {
   getAdminSubmissions,
   updateSubmissionStatus,
-  type AdminSubmission,
-  type SubmissionStatus,
 } from "../api";
+import type { AdminSubmission,SubmissionStatus } from "@features/admin/types";
+import { getGarmentPrice, getWorkPrice } from "../../../common/pricing";
+import type { GarmentType, WorkType } from "@features/submission/types";
 
 const STATUS_LABELS: Record<SubmissionStatus, string> = {
   pending: "En attente",
@@ -194,8 +195,29 @@ export default function AdminPage() {
                       <span>{submission.email}</span>
                     </td>
                     <td>
-                      <strong>{submission.garment_type}</strong>
-                      <span>{submission.work_type}</span>
+                      {submission.items && submission.items.length > 0 ? (
+                        <>
+                          <strong>
+                            {submission.items.length}{" "}
+                            {submission.items.length > 1 ? "pièces" : "pièce"}
+                            {submission.total_price
+                              ? ` · ${submission.total_price} €`
+                              : ""}
+                          </strong>
+                          <span>
+                            {submission.items
+                              .map((it) => it.garment_type)
+                              .slice(0, 3)
+                              .join(", ")}
+                            {submission.items.length > 3 ? "..." : ""}
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <strong>{submission.garment_type}</strong>
+                          <span>{submission.work_type}</span>
+                        </>
+                      )}
                     </td>
                     <td>
                       {submission.zone}
@@ -272,19 +294,23 @@ export default function AdminPage() {
                 <dt>Téléphone</dt>
                 <dd>{selected.phone_number}</dd>
               </div>
-              <div>
-                <dt>Vêtement</dt>
-                <dd>
-                  {selected.garment_type}
-                  {selected.garment_type_other
-                    ? ` · ${selected.garment_type_other}`
-                    : ""}
-                </dd>
-              </div>
-              <div>
-                <dt>Prestation</dt>
-                <dd>{selected.work_type}</dd>
-              </div>
+              {(!selected.items || selected.items.length === 0) && (
+                <>
+                  <div>
+                    <dt>Vêtement</dt>
+                    <dd>
+                      {selected.garment_type}
+                      {selected.garment_type_other
+                        ? ` · ${selected.garment_type_other}`
+                        : ""}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>Prestation</dt>
+                    <dd>{selected.work_type}</dd>
+                  </div>
+                </>
+              )}
               <div>
                 <dt>Zone</dt>
                 <dd>{selected.zone}</dd>
@@ -297,7 +323,131 @@ export default function AdminPage() {
                 <dt>Taille</dt>
                 <dd>{selected.height_cm} cm</dd>
               </div>
+              {selected.total_price !== undefined &&
+                selected.total_price !== null && (
+                  <div>
+                    <dt>Montant total</dt>
+                    <dd>
+                      <strong style={{ color: "var(--color-gold, #b8935a)" }}>
+                        {selected.total_price} €
+                      </strong>
+                    </dd>
+                  </div>
+                )}
             </dl>
+
+            {selected.items && selected.items.length > 0 && (
+              <div style={{ marginTop: "16px", marginBottom: "16px" }}>
+                <span
+                  className="admin-eyebrow"
+                  style={{ display: "block", marginBottom: "8px" }}
+                >
+                  Détail des pièces ({selected.items.length})
+                </span>
+                <div
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "8px",
+                  }}
+                >
+                  {selected.items.map((item, idx) => {
+                    const gPrice =
+                      item.garment_price ??
+                      getGarmentPrice(item.garment_type as GarmentType);
+                    const wPrice =
+                      item.work_price ??
+                      getWorkPrice(item.work_type as WorkType);
+                    const piecePrice = item.price ?? gPrice + wPrice;
+
+                    return (
+                      <div
+                        key={item.id || idx}
+                        style={{
+                          padding: "12px 14px",
+                          border: "1px solid rgba(184, 147, 90, 0.2)",
+                          borderRadius: "12px",
+                          backgroundColor: "#fff",
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <div>
+                          <strong
+                            style={{
+                              textTransform: "capitalize",
+                              display: "block",
+                              fontSize: "14px",
+                              color: "#2c2416",
+                            }}
+                          >
+                            #{idx + 1} {item.garment_type}
+                            {item.garment_type_other
+                              ? ` · ${item.garment_type_other}`
+                              : ""}
+                          </strong>
+                          <div
+                            style={{
+                              fontSize: "12px",
+                              color: "#5c4f38",
+                              marginTop: "3px",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "6px",
+                            }}
+                          >
+                            <span>Produit : {gPrice} €</span>
+                            <span>+</span>
+                            <span style={{ textTransform: "capitalize" }}>
+                              {item.work_type} : {wPrice} €
+                            </span>
+                          </div>
+                          {item.comment && (
+                            <span
+                              style={{
+                                fontSize: "11px",
+                                color: "#9c8b72",
+                                fontStyle: "italic",
+                                display: "block",
+                                marginTop: "3px",
+                              }}
+                            >
+                              « {item.comment} »
+                            </span>
+                          )}
+                        </div>
+                        <div
+                          style={{
+                            textAlign: "right",
+                            marginLeft: "14px",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontWeight: 700,
+                              fontSize: "16px",
+                              color: "#b8935a",
+                            }}
+                          >
+                            {piecePrice} €
+                          </span>
+                          <span
+                            style={{
+                              display: "block",
+                              fontSize: "10.5px",
+                              color: "#9c8b72",
+                            }}
+                          >
+                            {gPrice}€ + {wPrice}€
+                          </span>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
             {selected.comment && (
               <div className="admin-comment">
                 <span>Commentaire</span>

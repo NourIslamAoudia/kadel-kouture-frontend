@@ -1,4 +1,5 @@
 import type { GarmentType } from "../types";
+import { getGarmentPrice, formatPrice } from "../../../common/pricing";
 
 interface GarmentOption {
   value: GarmentType;
@@ -17,6 +18,7 @@ const OPTIONS: GarmentOption[] = [
 interface Props {
   value: GarmentType | null;
   otherValue: string;
+  itemIndex?: number;
   onChange: (value: GarmentType) => void;
   onOtherChange: (value: string) => void;
 }
@@ -24,6 +26,7 @@ interface Props {
 export default function GarmentTypeStep({
   value,
   otherValue,
+  itemIndex,
   onChange,
   onOtherChange,
 }: Props) {
@@ -31,29 +34,41 @@ export default function GarmentTypeStep({
     <div>
       <p className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-gold">
         <span className="h-px w-[18px] bg-gold" />
-        Nouvelle pièce
+        {itemIndex !== undefined
+          ? `Pièce n° ${itemIndex + 1}`
+          : "Nouvelle pièce"}
       </p>
 
-      <h2 className="mb-6 font-serif text-3xl font-light leading-tight text-ink">
+      <h2 className="mb-2 font-serif text-3xl font-light leading-tight text-ink">
         Que souhaitez-vous transformer ?
       </h2>
+
+      <p className="mb-6 text-[13px] leading-relaxed text-ink-3">
+        Choisissez le produit à confectionner ou ajuster.
+      </p>
 
       <div className="grid grid-cols-3 gap-3">
         {OPTIONS.map((option) => {
           const selected = value === option.value;
+          const garmentPrice = getGarmentPrice(option.value);
           return (
             <button
               key={option.value}
               type="button"
               onClick={() => onChange(option.value)}
-              className={`flex flex-col items-center gap-2 rounded-lg border px-3 py-4 text-center text-[13px] transition ${
+              className={`flex flex-col items-center justify-between gap-1.5 rounded-xl border p-3 text-center transition ${
                 selected
-                  ? "border-gold bg-gold-pale text-ink"
+                  ? "border-gold bg-gold-pale text-ink shadow-sm"
                   : "border-gold/20 bg-white text-ink-2 hover:border-gold hover:bg-gold-pale/40"
               }`}
             >
               <GarmentIcon type={option.value} className="text-gold" />
-              {option.label}
+              <span className="text-[13px] font-medium leading-tight text-ink">
+                {option.label}
+              </span>
+              <span className="rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-medium text-gold">
+                {formatPrice(garmentPrice)}
+              </span>
             </button>
           );
         })}

@@ -1,45 +1,67 @@
-import type { WorkType } from '../types'
+import type { GarmentType, WorkType } from "../types";
+import {
+  getGarmentPrice,
+  getWorkPrice,
+  formatPrice,
+} from "../../../common/pricing";
 
 interface WorkOption {
-  value: WorkType
-  label: string
-  description: string
+  value: WorkType;
+  label: string;
+  description: string;
 }
 
 const OPTIONS: WorkOption[] = [
   {
-    value: 'retouche',
-    label: 'Retouche',
-    description: 'Ourlets, ajustements, coutures',
+    value: "retouche",
+    label: "Retouche",
+    description: "Ourlets, ajustements, coutures",
   },
   {
-    value: 'reparation',
-    label: 'Réparation',
-    description: 'Trous, fermetures éclair, boutons',
+    value: "reparation",
+    label: "Réparation",
+    description: "Trous, fermetures éclair, boutons",
   },
   {
-    value: 'personnalisation',
-    label: 'Personnalisation',
-    description: 'Broderies, impressions, logos',
+    value: "personnalisation",
+    label: "Personnalisation",
+    description: "Broderies, impressions, logos",
   },
   {
-    value: 'upcycling',
-    label: 'Upcycling',
-    description: 'Transformation créative',
+    value: "upcycling",
+    label: "Upcycling",
+    description: "Transformation créative",
   },
-]
+];
 
 interface Props {
-  value: WorkType | null
-  onChange: (value: WorkType) => void
+  value: WorkType | null;
+  garmentType?: GarmentType | null;
+  itemIndex?: number;
+  itemComment?: string;
+  onChange: (value: WorkType) => void;
+  onItemCommentChange?: (comment: string) => void;
 }
 
-export default function WorkTypeStep({ value, onChange }: Props) {
+export default function WorkTypeStep({
+  value,
+  garmentType,
+  itemIndex,
+  itemComment = "",
+  onChange,
+  onItemCommentChange,
+}: Props) {
+  const garmentPrice = getGarmentPrice(garmentType);
+  const selectedWorkPrice = getWorkPrice(value);
+  const pieceTotal = garmentPrice + selectedWorkPrice;
+
   return (
     <div>
       <p className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-gold">
         <span className="h-px w-[18px] bg-gold" />
-        Prestation
+        {itemIndex !== undefined
+          ? `Prestation · Pièce n° ${itemIndex + 1}`
+          : "Prestation"}
       </p>
 
       <h2 className="mb-2 font-serif text-3xl font-light leading-tight text-ink">
@@ -47,21 +69,24 @@ export default function WorkTypeStep({ value, onChange }: Props) {
       </h2>
 
       <p className="mb-6 text-[13px] leading-relaxed text-ink-3">
-        Sélectionnez la prestation la plus proche de votre besoin.
+        Sélectionnez la prestation souhaitée. Le tarif de la pièce est
+        l'addition du produit ({formatPrice(garmentPrice)}) et du service.
       </p>
 
       <div className="flex flex-col gap-2.5">
         {OPTIONS.map((option) => {
-          const selected = value === option.value
+          const selected = value === option.value;
+          const workPrice = getWorkPrice(option.value);
+
           return (
             <button
               key={option.value}
               type="button"
               onClick={() => onChange(option.value)}
-              className={`flex items-center gap-3 rounded-full border-[1.5px] px-4 py-3 text-left transition ${
+              className={`flex items-center gap-3 rounded-2xl border-[1.5px] px-4 py-3 text-left transition ${
                 selected
-                  ? 'border-gold bg-gold-pale'
-                  : 'border-gold/16 bg-white hover:border-gold hover:bg-gold-pale/40'
+                  ? "border-gold bg-gold-pale shadow-sm"
+                  : "border-gold/16 bg-white hover:border-gold hover:bg-gold-pale/40"
               }`}
             >
               <WorkIcon type={option.value} className="shrink-0 text-gold" />
@@ -75,19 +100,55 @@ export default function WorkTypeStep({ value, onChange }: Props) {
                 </span>
               </span>
 
-              <span
-                className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gold text-white ${
-                  selected ? 'flex' : 'hidden'
-                }`}
-              >
-                <CheckIcon />
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="rounded-full bg-gold/15 px-2.5 py-1 text-xs font-semibold text-ink">
+                  + {formatPrice(workPrice)}
+                </span>
+                <span
+                  className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-gold text-white ${
+                    selected ? "flex" : "hidden"
+                  }`}
+                >
+                  <CheckIcon />
+                </span>
+              </div>
             </button>
-          )
+          );
         })}
       </div>
+
+      {value && (
+        <div className="mt-4 rounded-xl border border-gold/25 bg-gold-pale/35 p-3 text-xs text-ink shadow-xs">
+          <div className="flex items-center justify-between">
+            <span>
+              <strong className="capitalize">{garmentType ?? "Produit"}</strong>{" "}
+              ({formatPrice(garmentPrice)}){" + "}
+              <strong className="capitalize">{value}</strong> (
+              {formatPrice(selectedWorkPrice)})
+            </span>
+            <span className="font-serif text-sm font-bold text-gold">
+              Total pièce : {formatPrice(pieceTotal)}
+            </span>
+          </div>
+        </div>
+      )}
+
+      {value && onItemCommentChange && (
+        <div className="mt-4 rounded-xl border border-gold/20 bg-white p-3.5">
+          <label className="mb-1.5 block text-[10px] uppercase tracking-[0.14em] text-ink-3">
+            Détail pour cette pièce (optionnel)
+          </label>
+          <input
+            type="text"
+            value={itemComment}
+            onChange={(e) => onItemCommentChange(e.target.value)}
+            placeholder="Ex : raccourcir de 4 cm, changer la fermeture..."
+            className="w-full rounded-lg border border-gold/20 bg-bg px-3 py-2 text-xs text-ink outline-none transition focus:border-gold"
+          />
+        </div>
+      )}
     </div>
-  )
+  );
 }
 
 function WorkIcon({ type, className }: { type: WorkType; className?: string }) {
@@ -116,7 +177,7 @@ function WorkIcon({ type, className }: { type: WorkType; className?: string }) {
         <path d="M18 4v4h-4M6 20v-4h4" />
       </>
     ),
-  }
+  };
 
   return (
     <svg
@@ -133,7 +194,7 @@ function WorkIcon({ type, className }: { type: WorkType; className?: string }) {
     >
       {paths[type]}
     </svg>
-  )
+  );
 }
 
 function CheckIcon() {
@@ -151,5 +212,5 @@ function CheckIcon() {
     >
       <path d="M20 6L9 17l-5-5" />
     </svg>
-  )
+  );
 }
