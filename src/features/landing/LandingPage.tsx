@@ -1,4 +1,3 @@
-import type { FounderOfferState } from "@/server/landing";
 import { AnnouncementBar } from "./components/AnnouncementBar";
 import { BeforeAfter } from "./components/BeforeAfter";
 import { Brands } from "./components/Brands";
@@ -16,11 +15,12 @@ import { StickyCta } from "./components/StickyCta";
 import { Story } from "./components/Story";
 import { Workshops } from "./components/Workshops";
 import type { LandingCopy } from "./content/fr";
+import type { FounderOffer } from "./types";
 import { MotionProvider } from "./motion/MotionProvider";
 
 interface LandingPageProps {
   copy: LandingCopy;
-  offer: FounderOfferState;
+  offer: FounderOffer | null;
   savedGarments: number | null;
 }
 

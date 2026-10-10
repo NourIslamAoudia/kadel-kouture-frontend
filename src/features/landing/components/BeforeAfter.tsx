@@ -57,10 +57,10 @@ function Compare({ kind, label, description, beforeLabel, afterLabel }: CompareP
         <BeforeAfterArt kind={kind} state="before" />
       </div>
 
-      <span className="absolute top-3 left-3 rounded-full bg-night/80 px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.18em] text-paper uppercase">
+      <span className="absolute top-3 left-3 rounded-full bg-night/80 px-2.5 py-1 text-[0.62rem] font-light tracking-[0.2em] text-paper uppercase">
         {beforeLabel}
       </span>
-      <span className="absolute top-3 right-3 rounded-full bg-paper/90 px-2.5 py-1 text-[0.62rem] font-semibold tracking-[0.18em] text-night uppercase">
+      <span className="absolute top-3 right-3 rounded-full bg-paper/90 px-2.5 py-1 text-[0.62rem] font-light tracking-[0.2em] text-night uppercase">
         {afterLabel}
       </span>
 
@@ -152,7 +152,7 @@ export function BeforeAfter({ copy }: { copy: LandingCopy }) {
                 </Parallax>
                 <figcaption className="kk-cartel mt-6 flex items-baseline justify-between gap-4 border-t border-night/15 pt-3">
                   <span className="font-display text-[1.25rem] italic">{item.title}</span>
-                  <span className="text-[0.66rem] font-semibold tracking-[0.2em] text-night/50 uppercase">
+                  <span className="text-[0.66rem] font-light tracking-[0.2em] text-night/50 uppercase">
                     {item.detail}
                   </span>
                 </figcaption>

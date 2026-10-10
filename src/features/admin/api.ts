@@ -1,13 +1,16 @@
-import { supabase } from "@shared/lib/supabase";
+import { API_URL } from "@shared/lib/api";
+import { getToken } from "@features/auth/session";
 import type { AdminSubmission, SubmissionResponse, SubmissionStatus } from "./types";
 
-export async function getAdminSubmissions(): Promise<SubmissionResponse> {
-  const { data: sessionData } = await supabase.auth.getSession();
-  const token = sessionData.session?.access_token;
+function authHeader() {
+  const token = getToken();
   if (!token) throw new Error("Session administrateur expirée.");
+  return { Authorization: `Bearer ${token}` };
+}
 
-  const response = await fetch(`/api/admin/submissions`, {
-    headers: { Authorization: `Bearer ${token}` },
+export async function getAdminSubmissions(): Promise<SubmissionResponse> {
+  const response = await fetch(`${API_URL}/api/admin/submissions`, {
+    headers: authHeader(),
   });
   const body = (await response.json()) as {
     message?: string;
@@ -21,18 +24,11 @@ export async function updateSubmissionStatus(
   id: string,
   status: SubmissionStatus,
 ): Promise<AdminSubmission> {
-  const { data: sessionData } = await supabase.auth.getSession();
-  const token = sessionData.session?.access_token;
-  if (!token) throw new Error("Session administrateur expirée.");
-
   const response = await fetch(
-    `/api/admin/submissions/${id}/status`,
+    `${API_URL}/api/admin/submissions/${id}/status`,
     {
       method: "PATCH",
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
-      },
+      headers: { ...authHeader(), "Content-Type": "application/json" },
       body: JSON.stringify({ status }),
     },
   );

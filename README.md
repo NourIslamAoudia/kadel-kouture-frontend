@@ -2,7 +2,7 @@
 
 Plateforme de couture et de réparation textile basée à Barcelone. Kadel Kouture digitalise la couture de proximité : **commander en ligne → déposer dans un point partenaire → faire travailler un artisan → récupérer son vêtement**.
 
-Ce dépôt contient l'application **Frontend** du projet, construite avec **Next.js (App Router) + React + TypeScript**. Les routes API (`src/app/api/`) remplacent l'ancien serveur Express `kadel-backend`.
+Ce dépôt contient l'application **Frontend** du projet, construite avec **Next.js (App Router) + React + TypeScript**. Toute la logique, les endpoints et les secrets sont dans le backend Express **`kadel-backend`** : ce dépôt ne fait que l'affichage et appelle le backend via `NEXT_PUBLIC_API_URL`.
 
 ---
 
@@ -130,7 +130,7 @@ La supervision globale de la plateforme.
 | Langage | **TypeScript** |
 | Librairie UI | **React** |
 | Routing | App Router Next.js (`src/app/`) |
-| Backend | Route handlers Next.js + Supabase (service role côté serveur) |
+| Backend | `kadel-backend` (Express), appelé via `src/shared/lib/api.ts` |
 | État serveur / cache API | TanStack Query (React Query) |
 | État global UI | Zustand |
 | Formulaires | React Hook Form + Zod |
@@ -154,9 +154,7 @@ src/
 │   ├── providers.tsx           # QueryClientProvider, AuthProvider
 │   ├── commander/page.tsx      # parcours de commande
 │   ├── admin/                  # dashboard admin + login
-│   └── api/                    # routes backend (ex. /api/admin/submissions)
-│
-├── server/                     # code serveur uniquement (Supabase service role, auth admin)
+│   └── (marketing)/            # landing page et /devenir-atelier
 │
 ├── features/                   # organisation par fonctionnalité
 │   ├── auth/
@@ -204,9 +202,9 @@ La page d'accueil (`/`) suit l'ordre du cahier des charges V1 (section 5). Direc
 | Illustrations SVG | `src/features/landing/art/`, en attendant les visuels de Kadel Kouture |
 | Animations | `src/features/landing/motion/` (librairie `motion`, respecte « réduire les animations ») |
 | Catalogue et prix | `src/common/services.ts` (grille de la section 6) et `src/common/offer.ts` (tarif fondateur) |
-| Chiffres affichés (places restantes, vêtements sauvés) | `src/server/landing.ts`, lus dans la base |
+| Chiffres affichés (places restantes, vêtements sauvés) | `GET /api/landing/stats` dans `kadel-backend` |
 
-Avant d'utiliser les formulaires « guide gratuit », « marques » et « devenir atelier », exécuter `db/migrations/001_landing_leads.sql` dans l'éditeur SQL de Supabase. Ce fichier crée les tables `leads` et `brand_requests`.
+La base est un PostgreSQL en conteneur, géré par `kadel-backend` (`npm run db:up` puis `npm run db:migrate`, voir son README).
 
 ---
 
@@ -233,13 +231,11 @@ L'application est disponible sur `http://localhost:3000`.
 Copier `.env.example` en `.env` à la racine du projet :
 
 ```env
-NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=xxxxxxxx
+NEXT_PUBLIC_API_URL=http://localhost:8001        # backend Express kadel-backend
 NEXT_PUBLIC_MODEL_API_URL=http://127.0.0.1:8000   # API FastAPI kadel_couture_model
-SUPABASE_SERVICE_ROLE_KEY=xxxxxxxx                # serveur uniquement
 ```
 
-Seules les variables préfixées `NEXT_PUBLIC_` sont envoyées au navigateur.
+Ces variables sont publiques. Les secrets (base de données, JWT…) sont uniquement dans le `.env` de `kadel-backend`.
 
 > ⚠️ Le fichier `.env` ne doit jamais être commité (déjà présent dans `.gitignore`).
 

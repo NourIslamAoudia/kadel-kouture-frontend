@@ -47,7 +47,7 @@ export function Story({ copy }: { copy: LandingCopy }) {
             <Reveal delay={0.25}>
               <p className="mt-2 flex items-baseline gap-3">
                 <span className="font-display text-[2rem] text-ochre italic">{story.signature}</span>
-                <span className="text-[0.7rem] font-semibold tracking-[0.18em] text-paper/55 uppercase">
+                <span className="text-[0.7rem] font-light tracking-[0.2em] text-paper/55 uppercase">
                   {story.signatureRole}
                 </span>
               </p>
@@ -65,7 +65,7 @@ export function Story({ copy }: { copy: LandingCopy }) {
                   <ArtReveal delay={index * 0.15}>{poster.art}</ArtReveal>
                 </Frame>
               </Parallax>
-              <figcaption className="mt-6 hidden text-[0.66rem] font-semibold tracking-[0.2em] text-paper/55 uppercase sm:block">
+              <figcaption className="mt-6 hidden text-[0.66rem] font-light tracking-[0.2em] text-paper/55 uppercase sm:block">
                 {poster.caption}
               </figcaption>
             </figure>

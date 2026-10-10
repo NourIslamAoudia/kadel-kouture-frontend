@@ -1,6 +1,5 @@
-import { FOUNDER_OFFER } from "@/common/offer";
-import type { FounderOfferState } from "@/server/landing";
 import type { LandingCopy } from "../content/fr";
+import type { FounderOffer } from "../types";
 import { fill } from "../lib/fill";
 import { Reveal } from "../motion/Reveal";
 import { SplitLines } from "../motion/SplitLines";
@@ -13,7 +12,8 @@ export function FinalCta({
   offer,
 }: {
   copy: LandingCopy;
-  offer: FounderOfferState;
+  /** null si le backend ne répond pas */
+  offer: FounderOffer | null;
 }) {
   const { finalCta, lead } = copy;
 
@@ -35,20 +35,20 @@ export function FinalCta({
 
         <div className="mt-16 grid gap-12 border-t border-white/25 pt-10 lg:mt-24 lg:grid-cols-12 lg:items-end">
           <Reveal className="lg:col-span-6">
-            {offer.active ? (
+            {!offer ? null : offer.active ? (
               <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
                 {offer.remaining !== null ? (
                   <p className="flex items-end gap-4">
                     <span className="font-display text-[clamp(4.5rem,9vw,8rem)] leading-[0.8]">
                       {offer.remaining}
                     </span>
-                    <span className="max-w-[9rem] pb-1 text-[0.72rem] font-semibold tracking-[0.18em] text-white/80 uppercase">
-                      {fill(finalCta.remaining, { limit: FOUNDER_OFFER.limit })}
+                    <span className="max-w-[9rem] pb-1 text-[0.72rem] font-light tracking-[0.2em] text-white/80 uppercase">
+                      {fill(finalCta.remaining, { limit: offer.limit })}
                     </span>
                   </p>
                 ) : null}
                 <p className="max-w-[26ch] pb-1 text-[1.05rem] leading-snug">
-                  {fill(finalCta.founder, { discount: FOUNDER_OFFER.discountPercent })}
+                  {fill(finalCta.founder, { discount: offer.discountPercent })}
                 </p>
               </div>
             ) : (

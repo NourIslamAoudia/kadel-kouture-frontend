@@ -1,35 +1,16 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import type { User as SupabaseUser } from "@supabase/supabase-js";
-import { supabase } from "@shared/lib/supabase";
 import type { User } from "@shared/types/user";
-
-export function mapSupabaseUser(supabaseUser: SupabaseUser): User {
-  const metadata = supabaseUser.user_metadata ?? {};
-  const appMetadata = supabaseUser.app_metadata ?? {};
-  const isAdmin = appMetadata.is_admin === true;
-  const role = appMetadata.role === "admin" ? "admin" : "client";
-
-  return {
-    id: supabaseUser.id,
-    email: supabaseUser.email ?? "",
-    name:
-      (typeof metadata.name === "string" ? metadata.name : null) ??
-      (typeof metadata.full_name === "string" ? metadata.full_name : null) ??
-      supabaseUser.email ??
-      "Utilisateur",
-    role,
-    is_admin: isAdmin,
-  };
-}
+import { authApi } from "../api";
+import { clearToken, getToken, setToken } from "../session";
 
 const AuthContext = createContext<
   | {
       user: User | null;
-      /** false tant que la session Supabase n'a pas été lue */
+      /** false tant que la session n'a pas été vérifiée auprès du backend */
       ready: boolean;
-      login: (user: User) => void;
+      login: (email: string, password: string) => Promise<User>;
       logout: () => void;
     }
   | undefined
@@ -41,30 +22,33 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     let active = true;
-    void supabase.auth.getSession().then(({ data }) => {
-      if (!active) return;
-      if (data.session?.user) setUser(mapSupabaseUser(data.session.user));
-      setReady(true);
-    });
-
-    const { data } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (active) setUser(session?.user ? mapSupabaseUser(session.user) : null);
-    });
-
+    const token = getToken();
+    const check = token ? authApi.me(token) : Promise.resolve(null);
+    void check
+      .catch(() => null)
+      .then((current) => {
+        if (!active) return;
+        if (!current) clearToken();
+        setUser(current);
+        setReady(true);
+      });
     return () => {
       active = false;
-      data.subscription.unsubscribe();
     };
   }, []);
 
-  const login = (user: User) => {
-    setUser(user);
+  const login = async (email: string, password: string) => {
+    const { user: loggedIn, accessToken } = await authApi.login({ email, password });
+    setToken(accessToken);
+    setUser(loggedIn);
+    return loggedIn;
   };
+
   const logout = () => {
+    clearToken();
     setUser(null);
-    localStorage.removeItem("accessToken");
-    void supabase.auth.signOut();
   };
+
   return (
     <AuthContext.Provider value={{ user, ready, login, logout }}>
       {children}

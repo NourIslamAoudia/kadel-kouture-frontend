@@ -94,7 +94,7 @@ export function Problem({ copy }: { copy: LandingCopy }) {
             className="mt-12 grid max-w-[60rem] gap-8 border-t border-current/15 pt-8 sm:grid-cols-2 sm:gap-12 lg:mt-16"
           >
             <p className="flex flex-col gap-2">
-              <span className="text-[0.72rem] font-semibold tracking-[0.2em] uppercase opacity-60">
+              <span className="text-[0.72rem] font-light tracking-[0.2em] uppercase opacity-60">
                 {problem.replace}
               </span>
               <span className="relative w-fit font-display text-[clamp(2.6rem,5.5vw,4.6rem)] leading-none opacity-55">
@@ -107,7 +107,7 @@ export function Problem({ copy }: { copy: LandingCopy }) {
               </span>
             </p>
             <p className="flex flex-col gap-2">
-              <span className="text-[0.72rem] font-semibold tracking-[0.2em] uppercase opacity-60">
+              <span className="text-[0.72rem] font-light tracking-[0.2em] uppercase opacity-60">
                 {problem.repair}
               </span>
               <motion.span

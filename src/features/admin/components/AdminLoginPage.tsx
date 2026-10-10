@@ -2,8 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { mapSupabaseUser, useAuth } from "@features/auth/context/AuthContext";
-import { supabase } from "@shared/lib/supabase";
+import { useAuth } from "@features/auth/context/AuthContext";
 
 function isAdmin(user: { role: string; is_admin?: boolean }) {
   return user.role === "admin" || user.is_admin === true;
@@ -38,24 +37,14 @@ export default function AdminLoginPage() {
     setLoading(true);
     setError("");
     try {
-      const { data, error: loginError } =
-        await supabase.auth.signInWithPassword({
-          email: normalizedEmail,
-          password,
-        });
-      if (loginError || !data.user) {
-        throw loginError ?? new Error("Utilisateur introuvable");
-      }
-      const adminUser = mapSupabaseUser(data.user);
+      const adminUser = await login(normalizedEmail, password);
       if (!isAdmin(adminUser)) {
-        await supabase.auth.signOut();
         setError("Ce compte ne possède pas les droits administrateur.");
         return;
       }
-      login(adminUser);
       router.replace("/admin");
-    } catch {
-      setError("Email ou mot de passe incorrect.");
+    } catch (reason) {
+      setError(reason instanceof Error ? reason.message : "Email ou mot de passe incorrect.");
     } finally {
       setLoading(false);
     }

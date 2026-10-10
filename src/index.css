@@ -32,7 +32,7 @@
   --color-forest: #1f4a3a;
 
   /* Redéfinies par .kk-site avec les polices chargées par next/font */
-  --font-display: "Newsreader", Georgia, serif;
+  --font-display: "Bodoni Moda", Georgia, serif;
   --font-body: "Jost", system-ui, sans-serif;
 }
 

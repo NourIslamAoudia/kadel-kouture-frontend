@@ -7,9 +7,6 @@ import { Reveal } from "../motion/Reveal";
 import { SplitLines } from "../motion/SplitLines";
 import { Frame, SectionLabel } from "./ui";
 
-/** En dessous de ce nombre, le compteur ne s'affiche pas : on ne gonfle rien. */
-const SAVED_COUNTER_MIN = 25;
-
 /**
  * 5.7 — Autorité et preuve sociale.
  * TODO : portraits des ateliers (nom, spécialité, étoiles, nombre d'avis)
@@ -23,8 +20,8 @@ export function Workshops({
   savedGarments: number | null;
 }) {
   const { workshops } = copy;
-  const counter =
-    savedGarments !== null && savedGarments >= SAVED_COUNTER_MIN ? savedGarments : null;
+  // Le backend renvoie null tant que le nombre est trop petit : on ne gonfle rien.
+  const counter = savedGarments;
 
   return (
     <section id="ateliers" aria-labelledby="workshops-title" className="kk-section overflow-x-clip pb-0">

@@ -2,6 +2,7 @@
 
 import { useId, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { API_URL } from "@shared/lib/api";
 import { cx } from "../lib/cx";
 import { EASE_OUT } from "../motion/ease";
 
@@ -60,7 +61,7 @@ export function LeadForm({
     setMessage(null);
     setStatus("sending");
     try {
-      const response = await fetch("/api/leads", {
+      const response = await fetch(`${API_URL}/api/leads`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ kind, channel, contact: value, consent, locale, website }),

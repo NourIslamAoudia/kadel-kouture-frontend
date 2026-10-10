@@ -138,7 +138,7 @@ export function Services({ copy }: { copy: LandingCopy }) {
 
               <div className="mt-8 grid grid-cols-2 gap-6 border-t border-night/15 pt-6">
                 <p className="flex flex-col gap-1.5">
-                  <span className="text-[0.7rem] font-semibold tracking-[0.18em] text-night/55 uppercase">
+                  <span className="text-[0.7rem] font-light tracking-[0.2em] text-night/55 uppercase">
                     {services.anchor[garment]}
                   </span>
                   <span className="font-display text-[2rem] leading-none text-night/45 line-through decoration-terracotta decoration-2">
@@ -146,7 +146,7 @@ export function Services({ copy }: { copy: LandingCopy }) {
                   </span>
                 </p>
                 <p className="flex flex-col gap-1.5">
-                  <span className="text-[0.7rem] font-semibold tracking-[0.18em] text-night/55 uppercase">
+                  <span className="text-[0.7rem] font-light tracking-[0.2em] text-night/55 uppercase">
                     {services.repairFrom}
                   </span>
                   <span className="font-display text-[2rem] leading-none text-terracotta italic">
@@ -183,7 +183,7 @@ export function Services({ copy }: { copy: LandingCopy }) {
                           className="absolute inset-0 -z-10 origin-left scale-x-0 bg-paper transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-x-100 group-focus-visible:scale-x-100"
                         />
                         <span className="flex flex-col gap-1.5 transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:translate-x-3">
-                          <span className="flex items-center gap-2 text-[0.66rem] font-semibold tracking-[0.2em] text-night/50 uppercase">
+                          <span className="flex items-center gap-2 text-[0.66rem] font-light tracking-[0.2em] text-night/50 uppercase">
                             {services.categories[service.category]}
                             {creative ? (
                               <span className="rounded-full bg-ochre/20 px-2 py-0.5 tracking-[0.14em] text-[#7a5a14]">
@@ -196,7 +196,7 @@ export function Services({ copy }: { copy: LandingCopy }) {
                           </span>
                         </span>
                         <span className="text-right font-display text-[clamp(1.4rem,2.2vw,1.9rem)] whitespace-nowrap">
-                          <span className="mr-1.5 font-body text-[0.7rem] font-semibold tracking-[0.16em] text-night/50 uppercase">
+                          <span className="mr-1.5 font-body text-[0.7rem] font-light tracking-[0.2em] text-night/50 uppercase">
                             {services.from}
                           </span>
                           {service.fromPrice}&nbsp;€
@@ -282,7 +282,7 @@ function CreativeBand({ copy }: { copy: LandingCopy }) {
                     {piece.copy.title}
                   </p>
                   <p className="font-display text-[1.5rem] whitespace-nowrap">
-                    <span className="mr-1.5 font-body text-[0.7rem] font-semibold tracking-[0.16em] text-night/50 uppercase">
+                    <span className="mr-1.5 font-body text-[0.7rem] font-light tracking-[0.2em] text-night/50 uppercase">
                       {services.from}
                     </span>
                     {piece.price}&nbsp;€

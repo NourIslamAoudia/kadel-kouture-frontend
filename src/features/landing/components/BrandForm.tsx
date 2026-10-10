@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
+import { API_URL } from "@shared/lib/api";
 import type { LandingCopy } from "../content/fr";
 import { EASE_OUT } from "../motion/ease";
 
@@ -29,7 +30,7 @@ export function BrandForm({ copy }: { copy: LandingCopy["brands"] }) {
 
     setStatus("sending");
     try {
-      const response = await fetch("/api/brand-requests", {
+      const response = await fetch(`${API_URL}/api/brand-requests`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
@@ -66,7 +67,7 @@ export function BrandForm({ copy }: { copy: LandingCopy["brands"] }) {
           <div className="grid gap-8 sm:grid-cols-2">
             {fields.map((field) => (
               <label key={field.name} className={field.name === "email" ? "sm:col-span-2" : undefined}>
-                <span className="text-[0.68rem] font-semibold tracking-[0.2em] text-night/55 uppercase">
+                <span className="text-[0.68rem] font-light tracking-[0.2em] text-night/55 uppercase">
                   {field.label}
                 </span>
                 <input
@@ -79,7 +80,7 @@ export function BrandForm({ copy }: { copy: LandingCopy["brands"] }) {
               </label>
             ))}
             <label className="sm:col-span-2">
-              <span className="text-[0.68rem] font-semibold tracking-[0.2em] text-night/55 uppercase">
+              <span className="text-[0.68rem] font-light tracking-[0.2em] text-night/55 uppercase">
                 {copy.fields.need}
               </span>
               <textarea

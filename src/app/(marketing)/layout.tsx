@@ -1,8 +1,8 @@
-import { Jost, Newsreader } from "next/font/google";
+import { Bodoni_Moda, Jost } from "next/font/google";
 import "@features/landing/landing.css";
 
-// Titres : serif éditorial de magazine, axe optique pour des déliés fins en grand.
-const display = Newsreader({
+// Titres : Didone de magazine de mode, axe optique pour des déliés fins en grand.
+const display = Bodoni_Moda({
   subsets: ["latin"],
   style: ["normal", "italic"],
   axes: ["opsz"],
@@ -10,7 +10,7 @@ const display = Newsreader({
   display: "swap",
 });
 
-// Texte : géométrique dans la lignée de Futura, la police de la mode.
+// Texte, sous-titres et capitales : géométrique dans la lignée de Futura.
 const body = Jost({
   subsets: ["latin"],
   variable: "--font-landing-body",
