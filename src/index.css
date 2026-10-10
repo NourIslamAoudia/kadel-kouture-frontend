@@ -15,11 +15,25 @@
   --color-ink-3: #9c8b72;
 
   /* Polices */
-  --font-serif: "Cormorant Garamond", serif;
-  --font-sans: "DM Sans", sans-serif;
+  /* --font-cormorant / --font-dm-sans sont posées par next/font dans layout.tsx */
+  --font-serif: var(--font-cormorant), "Cormorant Garamond", serif;
+  --font-sans: var(--font-dm-sans), "DM Sans", sans-serif;
 
   /* Rayon des cartes (pas les pilules, celles-ci utilisent rounded-full) */
   --radius-card: 18px;
+
+  /* Charte V1 (cahier des charges, section 4) — landing page */
+  --color-paper: #f6f1ea;
+  --color-sand: #e8dccb;
+  --color-night: #1a1714;
+  --color-terracotta: #b5552d;
+  --color-ochre: #c9962e;
+  --color-brass: #b8964f;
+  --color-forest: #1f4a3a;
+
+  /* Redéfinies par .kk-site avec les polices chargées par next/font */
+  --font-display: "Bodoni Moda", Georgia, serif;
+  --font-body: "Manrope", system-ui, sans-serif;
 }
 
 body {

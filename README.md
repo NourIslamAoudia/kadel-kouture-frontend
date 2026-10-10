@@ -2,7 +2,7 @@
 
 Plateforme de couture et de réparation textile basée à Barcelone. Kadel Kouture digitalise la couture de proximité : **commander en ligne → déposer dans un point partenaire → faire travailler un artisan → récupérer son vêtement**.
 
-Ce dépôt contient l'application **Frontend** du projet, construite avec **Vite + React + TypeScript**.
+Ce dépôt contient l'application **Frontend** du projet, construite avec **Next.js (App Router) + React + TypeScript**. Les routes API (`src/app/api/`) remplacent l'ancien serveur Express `kadel-backend`.
 
 ---
 
@@ -126,10 +126,11 @@ La supervision globale de la plateforme.
 
 | Catégorie | Choix |
 |---|---|
-| Build tool | **Vite** |
+| Framework | **Next.js** (App Router) |
 | Langage | **TypeScript** |
 | Librairie UI | **React** |
-| Routing | React Router |
+| Routing | App Router Next.js (`src/app/`) |
+| Backend | Route handlers Next.js + Supabase (service role côté serveur) |
 | État serveur / cache API | TanStack Query (React Query) |
 | État global UI | Zustand |
 | Formulaires | React Hook Form + Zod |
@@ -148,10 +149,14 @@ La supervision globale de la plateforme.
 
 ```
 src/
-├── app/
-│   ├── router.tsx              # configuration des routes
-│   ├── App.tsx
-│   └── providers.tsx           # QueryClientProvider, etc.
+├── app/                        # App Router Next.js : une route = un dossier
+│   ├── layout.tsx              # layout racine, polices, providers
+│   ├── providers.tsx           # QueryClientProvider, AuthProvider
+│   ├── commander/page.tsx      # parcours de commande
+│   ├── admin/                  # dashboard admin + login
+│   └── api/                    # routes backend (ex. /api/admin/submissions)
+│
+├── server/                     # code serveur uniquement (Supabase service role, auth admin)
 │
 ├── features/                   # organisation par fonctionnalité
 │   ├── auth/
@@ -181,11 +186,27 @@ src/
 │   └── AdminLayout.tsx
 │
 ├── assets/
-├── styles/
-└── main.tsx
+└── index.css
 ```
 
 Chaque module de `features/` suit la même organisation : `components/`, `hooks/`, `api.ts` (appels au backend), `types.ts` (contrats de données partagés avec le backend).
+
+---
+
+## Landing page
+
+La page d'accueil (`/`) suit l'ordre du cahier des charges V1 (section 5). Direction artistique : une galerie, avec des vêtements accrochés comme des œuvres et un fil de couture qui relie les sections.
+
+| Quoi | Où |
+|---|---|
+| Textes (français) | `src/features/landing/content/fr.ts` (une langue = un fichier de même forme) |
+| Sections | `src/features/landing/components/` |
+| Illustrations SVG | `src/features/landing/art/`, en attendant les visuels de Kadel Kouture |
+| Animations | `src/features/landing/motion/` (librairie `motion`, respecte « réduire les animations ») |
+| Catalogue et prix | `src/common/services.ts` (grille de la section 6) et `src/common/offer.ts` (tarif fondateur) |
+| Chiffres affichés (places restantes, vêtements sauvés) | `src/server/landing.ts`, lus dans la base |
+
+Avant d'utiliser les formulaires « guide gratuit », « marques » et « devenir atelier », exécuter `db/migrations/001_landing_leads.sql` dans l'éditeur SQL de Supabase. Ce fichier crée les tables `leads` et `brand_requests`.
 
 ---
 
@@ -203,20 +224,22 @@ npm install
 npm run dev
 ```
 
-L'application est disponible sur `http://localhost:5173`.
+L'application est disponible sur `http://localhost:3000`.
 
 ---
 
 ## Variables d'environnement
 
-Créer un fichier `.env` à la racine du projet :
+Copier `.env.example` en `.env` à la racine du projet :
 
 ```env
-VITE_API_Base_URL=http://localhost:3000/api
-VITE_SOCKET_URL=http://localhost:3000
-VITE_MAPBOX_TOKEN=xxxxx
-VITE_STRIPE_PUBLIC_KEY=xxxxx
+NEXT_PUBLIC_SUPABASE_URL=https://xxxxxxxxx.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=xxxxxxxx
+NEXT_PUBLIC_MODEL_API_URL=http://127.0.0.1:8000   # API FastAPI kadel_couture_model
+SUPABASE_SERVICE_ROLE_KEY=xxxxxxxx                # serveur uniquement
 ```
+
+Seules les variables préfixées `NEXT_PUBLIC_` sont envoyées au navigateur.
 
 > ⚠️ Le fichier `.env` ne doit jamais être commité (déjà présent dans `.gitignore`).
 
@@ -226,10 +249,11 @@ VITE_STRIPE_PUBLIC_KEY=xxxxx
 
 | Commande | Description |
 |---|---|
-| `npm run dev` | Démarre le serveur de développement Vite |
-| `npm run build` | Compile TypeScript puis build l'application pour la production |
+| `npm run dev` | Démarre le serveur de développement Next.js |
+| `npm run build` | Build de production (avec vérification TypeScript) |
+| `npm run start` | Lance le build de production en local |
 | `npm run lint` | Vérifie le code avec ESLint |
-| `npm run preview` | Prévisualise le build de production en local |
+| `npm run typecheck` | Vérifie les types TypeScript |
 
 ---
 

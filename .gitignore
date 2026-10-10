@@ -27,3 +27,9 @@ node_modules/
 dist/
 dist-ssr/
 .env
+
+# Next.js
+.next/
+out/
+next-env.d.ts
+*.tsbuildinfo

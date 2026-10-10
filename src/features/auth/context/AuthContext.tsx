@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useEffect, useState } from "react";
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { supabase } from "@shared/lib/supabase";
@@ -25,6 +27,8 @@ export function mapSupabaseUser(supabaseUser: SupabaseUser): User {
 const AuthContext = createContext<
   | {
       user: User | null;
+      /** false tant que la session Supabase n'a pas été lue */
+      ready: boolean;
       login: (user: User) => void;
       logout: () => void;
     }
@@ -33,12 +37,14 @@ const AuthContext = createContext<
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     let active = true;
     void supabase.auth.getSession().then(({ data }) => {
-      if (active && data.session?.user)
-        setUser(mapSupabaseUser(data.session.user));
+      if (!active) return;
+      if (data.session?.user) setUser(mapSupabaseUser(data.session.user));
+      setReady(true);
     });
 
     const { data } = supabase.auth.onAuthStateChange((_event, session) => {
@@ -60,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     void supabase.auth.signOut();
   };
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, ready, login, logout }}>
       {children}
     </AuthContext.Provider>
   );

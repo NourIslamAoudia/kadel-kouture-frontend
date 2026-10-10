@@ -1,5 +1,7 @@
+"use client";
+
 import { useEffect, useMemo, useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useRouter } from "next/navigation";
 import { useAuth } from "@features/auth/context/AuthContext";
 import {
   getAdminSubmissions,
@@ -29,8 +31,8 @@ function formatDate(value: string | null) {
 }
 
 export default function AdminPage() {
-  const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const router = useRouter();
+  const { user, ready, logout } = useAuth();
   const [submissions, setSubmissions] = useState<AdminSubmission[]>([]);
   const [selected, setSelected] = useState<AdminSubmission | null>(null);
   const [statusFilter, setStatusFilter] = useState<"all" | SubmissionStatus>(
@@ -74,12 +76,22 @@ export default function AdminPage() {
     });
   }, [search, statusFilter, submissions]);
 
-  if (!user) return <Navigate to="/admin/login" replace />;
-  if (!isAdmin(user)) return <Navigate to="/" replace />;
+  const redirectTo = !ready
+    ? null
+    : !user
+      ? "/admin/login"
+      : !isAdmin(user)
+        ? "/"
+        : null;
+  useEffect(() => {
+    if (redirectTo) router.replace(redirectTo);
+  }, [redirectTo, router]);
+
+  if (!ready || !user || !isAdmin(user)) return null;
 
   const handleLogout = () => {
     logout();
-    navigate("/admin/login", { replace: true });
+    router.replace("/admin/login");
   };
 
   const handleStatusChange = async (status: SubmissionStatus) => {

@@ -1,16 +1,12 @@
 import { supabase } from "@shared/lib/supabase";
 import type { AdminSubmission, SubmissionResponse, SubmissionStatus } from "./types";
 
-const adminApiUrl = (
-  import.meta.env.VITE_ADMIN_API_URL ?? "http://localhost:8001"
-).replace(/\/$/, "");
-
 export async function getAdminSubmissions(): Promise<SubmissionResponse> {
   const { data: sessionData } = await supabase.auth.getSession();
   const token = sessionData.session?.access_token;
   if (!token) throw new Error("Session administrateur expirée.");
 
-  const response = await fetch(`${adminApiUrl}/api/admin/submissions`, {
+  const response = await fetch(`/api/admin/submissions`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   const body = (await response.json()) as {
@@ -30,7 +26,7 @@ export async function updateSubmissionStatus(
   if (!token) throw new Error("Session administrateur expirée.");
 
   const response = await fetch(
-    `${adminApiUrl}/api/admin/submissions/${id}/status`,
+    `/api/admin/submissions/${id}/status`,
     {
       method: "PATCH",
       headers: {

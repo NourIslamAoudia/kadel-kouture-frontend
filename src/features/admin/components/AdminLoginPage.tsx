@@ -1,5 +1,7 @@
-import { useState } from "react";
-import { Navigate, useNavigate } from "react-router-dom";
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { mapSupabaseUser, useAuth } from "@features/auth/context/AuthContext";
 import { supabase } from "@shared/lib/supabase";
 
@@ -8,14 +10,19 @@ function isAdmin(user: { role: string; is_admin?: boolean }) {
 }
 
 export default function AdminLoginPage() {
-  const navigate = useNavigate();
+  const router = useRouter();
   const { user, login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
-  if (user && isAdmin(user)) return <Navigate to="/admin" replace />;
+  const alreadyAdmin = !!user && isAdmin(user);
+  useEffect(() => {
+    if (alreadyAdmin) router.replace("/admin");
+  }, [alreadyAdmin, router]);
+
+  if (alreadyAdmin) return null;
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -46,7 +53,7 @@ export default function AdminLoginPage() {
         return;
       }
       login(adminUser);
-      navigate("/admin", { replace: true });
+      router.replace("/admin");
     } catch {
       setError("Email ou mot de passe incorrect.");
     } finally {
@@ -99,7 +106,7 @@ export default function AdminLoginPage() {
         <button
           type="button"
           className="admin-back-link"
-          onClick={() => navigate("/")}
+          onClick={() => router.push("/")}
         >
           Retour à Kadel Kouture
         </button>

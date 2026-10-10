@@ -1,3 +1,5 @@
+"use client";
+
 import { useState } from "react";
 import Topbar from "@shared/components/Topbar";
 import BottomNav from "@shared/components/BottomNav";
@@ -45,7 +47,16 @@ const STEP_ORDER: StepKey[] = [
   "zone",
 ];
 
-export default function OrderFlow() {
+interface OrderFlowProps {
+  /** Présélection depuis le catalogue de la landing page (section 5.5). */
+  initialGarment?: GarmentType | null;
+  initialWork?: WorkType | null;
+}
+
+export default function OrderFlow({
+  initialGarment = null,
+  initialWork = null,
+}: OrderFlowProps = {}) {
   const [step, setStep] = useState<StepKey>("garment");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -55,11 +66,11 @@ export default function OrderFlow() {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   // Étape vêtement en cours
-  const [garmentType, setGarmentType] = useState<GarmentType | null>(null);
+  const [garmentType, setGarmentType] = useState<GarmentType | null>(initialGarment);
   const [garmentOther, setGarmentOther] = useState("");
 
   // Étape travail en cours
-  const [workType, setWorkType] = useState<WorkType | null>(null);
+  const [workType, setWorkType] = useState<WorkType | null>(initialWork);
   const [itemComment, setItemComment] = useState("");
 
   // Étape méthode
