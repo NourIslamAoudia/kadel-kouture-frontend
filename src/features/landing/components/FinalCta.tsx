@@ -42,7 +42,7 @@ export function FinalCta({
                     <span className="font-display text-[clamp(4.5rem,9vw,8rem)] leading-[0.8]">
                       {offer.remaining}
                     </span>
-                    <span className="max-w-[9rem] pb-1 text-[0.72rem] font-light tracking-[0.2em] text-white/80 uppercase">
+                    <span className="max-w-[9rem] pb-1 text-[0.72rem] font-mono font-bold tracking-[0.12em] text-white/80 uppercase">
                       {fill(finalCta.remaining, { limit: offer.limit })}
                     </span>
                   </p>

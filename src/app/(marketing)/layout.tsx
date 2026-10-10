@@ -1,22 +1,31 @@
-import { Bodoni_Moda, Jost } from "next/font/google";
+import { Lora, Open_Sans, Space_Mono } from "next/font/google";
 import "@features/landing/landing.css";
 
-// Titres : Didone de magazine de mode, axe optique pour des déliés fins en grand.
-const display = Bodoni_Moda({
+// Titres : serif chaleureux et lisible, avec une vraie italique pour les mots mis en valeur.
+const display = Lora({
   subsets: ["latin"],
   style: ["normal", "italic"],
-  axes: ["opsz"],
   variable: "--font-landing-display",
   display: "swap",
 });
 
-// Texte, sous-titres et capitales : géométrique dans la lignée de Futura.
-const body = Jost({
+// Texte courant.
+const body = Open_Sans({
   subsets: ["latin"],
   variable: "--font-landing-body",
   display: "swap",
 });
 
+// Petits labels en capitales : monospace gras, façon étiquette d'atelier.
+const mono = Space_Mono({
+  subsets: ["latin"],
+  weight: ["400", "700"],
+  variable: "--font-landing-mono",
+  display: "swap",
+});
+
 export default function MarketingLayout({ children }: { children: React.ReactNode }) {
-  return <div className={`${display.variable} ${body.variable} kk-site`}>{children}</div>;
+  return (
+    <div className={`${display.variable} ${body.variable} ${mono.variable} kk-site`}>{children}</div>
+  );
 }

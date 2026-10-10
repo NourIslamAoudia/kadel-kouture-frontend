@@ -14,7 +14,7 @@ export function Seal({ text, center }: { text: string; center: string }) {
       <circle cx="100" cy="100" r="88" fill="none" stroke={C.cream} strokeOpacity=".35" strokeDasharray="3 4" />
       <g className="kk-spin">
         {/* textLength = circonférence (2π × 74) : le texte fait exactement le tour */}
-        <text fill={C.cream} fontSize="11.5" fontWeight="300" style={{ fontFamily: "var(--font-body)" }}>
+        <text fill={C.cream} fontSize="11" fontWeight="700" style={{ fontFamily: "var(--font-mono)" }}>
           <textPath href={`#${id}`} textLength="462" lengthAdjust="spacing">
             {text.toUpperCase()}
           </textPath>

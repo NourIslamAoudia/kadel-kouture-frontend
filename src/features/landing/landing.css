@@ -6,8 +6,9 @@
 
 @layer components {
   .kk-site {
-    --font-display: var(--font-landing-display), "Bodoni Moda", Didot, Georgia, serif;
-    --font-body: var(--font-landing-body), "Jost", system-ui, sans-serif;
+    --font-display: var(--font-landing-display), "Lora", Georgia, serif;
+    --font-body: var(--font-landing-body), "Open Sans", system-ui, sans-serif;
+    --font-mono: var(--font-landing-mono), "Space Mono", ui-monospace, monospace;
     --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
     --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
     --accent: var(--color-terracotta);
@@ -78,8 +79,8 @@
     font-family: var(--font-display);
     font-weight: 400;
     font-optical-sizing: auto;
-    letter-spacing: -0.022em;
-    line-height: 0.94;
+    letter-spacing: -0.015em;
+    line-height: 1;
   }
 
   .kk-display em,
@@ -92,10 +93,10 @@
     display: inline-flex;
     align-items: baseline;
     gap: 0.75rem;
-    font-family: var(--font-body);
-    font-size: 0.72rem;
-    font-weight: 300;
-    letter-spacing: 0.2em;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
   }
 

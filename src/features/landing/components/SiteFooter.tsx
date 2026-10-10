@@ -12,13 +12,13 @@ export function SiteFooter({ copy }: { copy: LandingCopy }) {
         <div className="grid gap-12 sm:grid-cols-2 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <p className="font-display text-[2rem] leading-tight italic">{footer.tagline}</p>
-            <p className="mt-4 text-[0.7rem] font-light tracking-[0.2em] text-paper/45 uppercase">
+            <p className="mt-4 text-[0.7rem] font-mono font-bold tracking-[0.12em] text-paper/45 uppercase">
               {footer.cities}
             </p>
           </div>
           {footer.columns.map((column) => (
             <nav key={column.title} aria-label={column.title} className="lg:col-span-2 lg:first-of-type:col-start-6">
-              <p className="text-[0.66rem] font-light tracking-[0.2em] text-paper/45 uppercase">{column.title}</p>
+              <p className="text-[0.66rem] font-mono font-bold tracking-[0.12em] text-paper/45 uppercase">{column.title}</p>
               <ul className="mt-5 grid gap-3 text-[0.92rem] text-paper/80">
                 {column.links.map((link) => (
                   <li key={link.href}>

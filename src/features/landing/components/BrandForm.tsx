@@ -67,7 +67,7 @@ export function BrandForm({ copy }: { copy: LandingCopy["brands"] }) {
           <div className="grid gap-8 sm:grid-cols-2">
             {fields.map((field) => (
               <label key={field.name} className={field.name === "email" ? "sm:col-span-2" : undefined}>
-                <span className="text-[0.68rem] font-light tracking-[0.2em] text-night/55 uppercase">
+                <span className="text-[0.68rem] font-mono font-bold tracking-[0.12em] text-night/55 uppercase">
                   {field.label}
                 </span>
                 <input
@@ -80,7 +80,7 @@ export function BrandForm({ copy }: { copy: LandingCopy["brands"] }) {
               </label>
             ))}
             <label className="sm:col-span-2">
-              <span className="text-[0.68rem] font-light tracking-[0.2em] text-night/55 uppercase">
+              <span className="text-[0.68rem] font-mono font-bold tracking-[0.12em] text-night/55 uppercase">
                 {copy.fields.need}
               </span>
               <textarea

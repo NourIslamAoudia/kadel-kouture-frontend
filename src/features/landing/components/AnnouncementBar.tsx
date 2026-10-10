@@ -19,7 +19,7 @@ export function AnnouncementBar({
       <p className="kk-container flex flex-wrap items-center justify-center gap-x-3 gap-y-1 py-2.5 text-center text-[0.78rem] leading-snug">
         {offer?.active ? (
           <>
-            <span className="text-[0.66rem] font-light tracking-[0.2em] text-ochre uppercase">
+            <span className="text-[0.66rem] font-mono font-bold tracking-[0.12em] text-ochre uppercase">
               {announcement.label}
             </span>
             <span className="hidden text-paper/80 md:inline">

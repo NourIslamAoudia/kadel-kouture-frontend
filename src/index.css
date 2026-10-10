@@ -32,8 +32,8 @@
   --color-forest: #1f4a3a;
 
   /* Redéfinies par .kk-site avec les polices chargées par next/font */
-  --font-display: "Bodoni Moda", Georgia, serif;
-  --font-body: "Jost", system-ui, sans-serif;
+  --font-display: "Lora", Georgia, serif;
+  --font-body: "Open Sans", system-ui, sans-serif;
 }
 
 body {
