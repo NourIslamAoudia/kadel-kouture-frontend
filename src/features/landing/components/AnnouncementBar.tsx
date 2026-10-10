@@ -1,41 +1,51 @@
 import Link from "next/link";
-import type { LandingCopy } from "../content/fr";
-import type { FounderOffer } from "../types";
+import type { LandingDictionary } from "../i18n/fr";
 import { fill } from "../lib/fill";
+import type { FounderOffer } from "../types";
 
-/** 5.1 — Rareté réelle : le compteur vient de la base de commandes. */
+/**
+ * A — L'offre fondateur, et seulement si elle est réellement active.
+ * Le compteur n'apparaît que si le backend renvoie une vraie valeur.
+ */
 export function AnnouncementBar({
-  copy,
+  t,
   offer,
 }: {
-  copy: LandingCopy;
-  /** null si le backend ne répond pas */
+  t: LandingDictionary;
   offer: FounderOffer | null;
 }) {
-  const { announcement } = copy;
+  const { announcement } = t;
+  const active = offer?.active ?? false;
 
   return (
-    <div className="relative z-50 bg-night text-paper">
-      <p className="kk-container flex flex-wrap items-center justify-center gap-x-3 gap-y-1 py-2.5 text-center text-[0.78rem] leading-snug">
-        {offer?.active ? (
+    <div className="relative z-[60] bg-kk-ink text-kk-ivory">
+      <p className="kk-container flex min-h-[38px] flex-wrap items-center justify-center gap-x-4 gap-y-1 py-2 text-center text-[0.66rem] font-semibold tracking-[0.2em] uppercase">
+        {active && offer ? (
           <>
-            <span className="text-[0.66rem] font-mono font-bold tracking-[0.12em] text-ochre uppercase">
-              {announcement.label}
+            <span className="hidden sm:inline">
+              {fill(announcement.offer, { discount: offer.discountPercent })}
             </span>
-            <span className="hidden text-paper/80 md:inline">
-              {fill(announcement.text, { discount: offer.discountPercent, limit: offer.limit })}
+            <span className="sm:hidden">
+              {fill(announcement.offerShort, {
+                discount: offer.discountPercent,
+              })}
             </span>
-            <span className="text-paper/80 md:hidden">
-              {fill(announcement.short, { discount: offer.discountPercent })}
+            <span className="hidden text-kk-ivory/70 md:inline">
+              {fill(announcement.limit, { limit: offer.limit })}
             </span>
             {offer.remaining !== null ? (
-              <span className="font-semibold">{fill(announcement.remaining, { count: offer.remaining })}</span>
+              <span className="text-kk-sand">
+                {fill(announcement.remaining, { count: offer.remaining })}
+              </span>
             ) : null}
           </>
         ) : (
-          <span className="text-paper/80">{announcement.soldOut}</span>
+          <span className="text-kk-ivory/80">{announcement.fallback}</span>
         )}
-        <Link href="/commander" className="kk-link font-semibold">
+        <Link
+          href="/commander"
+          className="hidden underline decoration-kk-ivory/40 underline-offset-4 hover:decoration-kk-ivory sm:inline"
+        >
           {announcement.cta}
         </Link>
       </p>

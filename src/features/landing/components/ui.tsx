@@ -1,55 +1,12 @@
+import Image from "next/image";
 import Link from "next/link";
-import { ArrowIcon } from "../art/Ornaments";
 import { cx } from "../lib/cx";
-
-interface FrameProps {
-  children: React.ReactNode;
-  className?: string;
-  variant?: "black" | "oak" | "white";
-  /** Passe-partout autour de l'œuvre. */
-  mat?: boolean;
-}
-
-/** Cadre de galerie : baguette, passe-partout, œuvre texturée. */
-export function Frame({ children, className, variant = "black", mat = true }: FrameProps) {
-  return (
-    <div
-      className={cx(
-        "kk-frame",
-        variant === "oak" && "kk-frame--oak",
-        variant === "white" && "kk-frame--white",
-        className,
-      )}
-    >
-      <div className={cx("kk-frame__mat", !mat && "kk-frame__mat--flush")}>
-        <div className="kk-frame__art kk-grain">{children}</div>
-      </div>
-    </div>
-  );
-}
-
-/** « (03) Le catalogue » : le numéro de salle de chaque section. */
-export function SectionLabel({
-  index,
-  label,
-  className,
-}: {
-  index?: string;
-  label: string;
-  className?: string;
-}) {
-  return (
-    <p className={cx("kk-label", className)}>
-      {index ? <span className="kk-label__index">({index})</span> : null}
-      <span>{label}</span>
-    </p>
-  );
-}
+import { ArtReveal } from "../motion/ArtReveal";
 
 interface ActionLinkProps {
   href?: string;
   children: React.ReactNode;
-  variant?: "primary" | "light" | "ghost";
+  variant?: "dark" | "light" | "outline";
   size?: "default" | "small";
   className?: string;
 }
@@ -58,7 +15,7 @@ interface ActionLinkProps {
 export function ActionLink({
   href = "/commander",
   children,
-  variant = "primary",
+  variant = "dark",
   size = "default",
   className,
 }: ActionLinkProps) {
@@ -68,15 +25,70 @@ export function ActionLink({
       className={cx(
         "kk-btn",
         variant === "light" && "kk-btn--light",
-        variant === "ghost" && "kk-btn--ghost",
+        variant === "outline" && "kk-btn--outline",
         size === "small" && "kk-btn--small",
         className,
       )}
     >
       <span>{children}</span>
-      <span className="kk-btn__icon">
-        <ArrowIcon />
-      </span>
+      <span className="kk-btn__line" aria-hidden="true" />
     </Link>
+  );
+}
+
+export function SectionLabel({
+  children,
+  className,
+}: {
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return <p className={cx("kk-label", className)}>{children}</p>;
+}
+
+interface EditorialImageProps {
+  src: string;
+  alt: string;
+  /** Rapport largeur / hauteur du cadre, ex. "4 / 5". */
+  ratio: string;
+  sizes: string;
+  /** Point de cadrage, ex. "35% 50%". */
+  focus?: string;
+  className?: string;
+  priority?: boolean;
+  reveal?: boolean;
+}
+
+/** Image d'une des quatre scènes de la vidéo, cadrée et révélée au défilement. */
+export function EditorialImage({
+  src,
+  alt,
+  ratio,
+  sizes,
+  focus = "50% 50%",
+  className,
+  priority = false,
+  reveal = true,
+}: EditorialImageProps) {
+  const image = (
+    <Image
+      src={src}
+      alt={alt}
+      fill
+      sizes={sizes}
+      quality={85}
+      priority={priority}
+      style={{ objectPosition: focus }}
+    />
+  );
+
+  return (
+    <div className={cx("kk-media", className)} style={{ aspectRatio: ratio }}>
+      {reveal ? (
+        <ArtReveal className="absolute inset-0">{image}</ArtReveal>
+      ) : (
+        image
+      )}
+    </div>
   );
 }

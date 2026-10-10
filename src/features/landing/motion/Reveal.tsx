@@ -1,28 +1,23 @@
-"use client";
+import { createElement, type CSSProperties } from "react";
 
-import { motion } from "motion/react";
-import { EASE_OUT } from "./ease";
-
-const TAGS = {
-  div: motion.div,
-  p: motion.p,
-  li: motion.li,
-  span: motion.span,
-  figure: motion.figure,
-  footer: motion.footer,
-};
+type RevealTag = "div" | "p" | "li" | "span" | "figure" | "footer";
 
 interface RevealProps {
   children: React.ReactNode;
-  as?: keyof typeof TAGS;
+  as?: RevealTag;
   className?: string;
+  /** Délai en secondes. */
   delay?: number;
+  /** Décalage vertical de départ, en pixels. */
   y?: number;
   /** Anime au chargement plutôt qu'à l'entrée dans l'écran. */
   onMount?: boolean;
 }
 
-/** Apparition douce : l'élément monte de quelques pixels et se pose. */
+/**
+ * Apparition douce : l'élément monte de quelques pixels et se pose.
+ * Composant serveur : l'animation est en CSS (landing.css), déclenchée par RevealObserver.
+ */
 export function Reveal({
   children,
   as = "div",
@@ -31,22 +26,13 @@ export function Reveal({
   y = 28,
   onMount = false,
 }: RevealProps) {
-  const Component = TAGS[as] as typeof motion.div;
-  const trigger = onMount
-    ? { animate: { opacity: 1, y: 0 } }
-    : {
-        whileInView: { opacity: 1, y: 0 },
-        viewport: { once: true, margin: "0px 0px -8% 0px" },
-      };
-
-  return (
-    <Component
-      className={className}
-      initial={{ opacity: 0, y }}
-      transition={{ duration: 1.1, ease: EASE_OUT, delay }}
-      {...trigger}
-    >
-      {children}
-    </Component>
+  return createElement(
+    as,
+    {
+      className,
+      "data-reveal": onMount ? "mount" : "scroll",
+      style: { "--kk-delay": `${delay}s`, "--kk-y": `${y}px` } as CSSProperties,
+    },
+    children,
   );
 }

@@ -1,72 +1,91 @@
-import type { LandingCopy } from "../content/fr";
-import type { FounderOffer } from "../types";
+import type { LandingDictionary } from "../i18n/fr";
+import type { Locale } from "../i18n/locales";
 import { fill } from "../lib/fill";
+import type { FounderOffer } from "../types";
 import { Reveal } from "../motion/Reveal";
 import { SplitLines } from "../motion/SplitLines";
 import { LeadForm } from "./LeadForm";
-import { ActionLink } from "./ui";
+import { ActionLink, EditorialImage } from "./ui";
 
-/** 5.11 — Faire agir, puis rattraper les indécis. */
+/**
+ * L — La phrase de clôture, en pleine largeur, puis le geste principal face à l'atelier de Barcelone.
+ * L'offre fondateur n'est rappelée que si elle est réellement active.
+ * En dessous, pour les indécis : le guide gratuit (email ou WhatsApp).
+ */
 export function FinalCta({
-  copy,
+  t,
+  locale,
   offer,
 }: {
-  copy: LandingCopy;
-  /** null si le backend ne répond pas */
+  t: LandingDictionary;
+  locale: Locale;
   offer: FounderOffer | null;
 }) {
-  const { finalCta, lead } = copy;
+  const { final: copy, lead } = t;
+  const active = offer?.active ?? false;
 
   return (
-    <section
-      id="commander"
-      aria-labelledby="final-title"
-      className="kk-section overflow-hidden bg-terracotta text-white"
-      style={{ ["--accent" as string]: "var(--color-paper)" }}
-    >
-      <div className="kk-container">
-        <SplitLines
-          as="h2"
-          id="final-title"
-          lines={finalCta.title}
-          className="kk-display text-[clamp(2.15rem,7.4vw,7.6rem)]"
-          lineClassNames={[undefined, "pl-[12%]", "pl-[4%]"]}
-        />
+    <section id="order" aria-labelledby="final-title">
+      <div className="kk-section kk-on-dark bg-kk-ink text-kk-ivory">
+        <div className="kk-container">
+          <SplitLines
+            as="h2"
+            id="final-title"
+            lines={copy.title}
+            className="kk-display text-[clamp(2.4rem,5.6vw,5.8rem)]"
+            lineClassNames={[undefined, "md:pl-[8%]"]}
+          />
 
-        <div className="mt-16 grid gap-12 border-t border-white/25 pt-10 lg:mt-24 lg:grid-cols-12 lg:items-end">
-          <Reveal className="lg:col-span-6">
-            {!offer ? null : offer.active ? (
-              <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
-                {offer.remaining !== null ? (
-                  <p className="flex items-end gap-4">
-                    <span className="font-display text-[clamp(4.5rem,9vw,8rem)] leading-[0.8]">
-                      {offer.remaining}
-                    </span>
-                    <span className="max-w-[9rem] pb-1 text-[0.72rem] font-mono font-bold tracking-[0.12em] text-white/80 uppercase">
-                      {fill(finalCta.remaining, { limit: offer.limit })}
-                    </span>
+          <div className="mt-16 grid gap-12 md:mt-24 md:grid-cols-12 md:items-end md:gap-x-6 lg:gap-x-10">
+            <figure className="md:col-span-5">
+              <EditorialImage
+                src="/media/scene-barcelona.jpg"
+                alt={copy.imageAlt}
+                ratio="4 / 5"
+                focus="42% 40%"
+                sizes="(min-width: 768px) 40vw, 100vw"
+              />
+              <figcaption className="kk-caps mt-4 text-kk-ivory/65">
+                Barcelona
+              </figcaption>
+            </figure>
+
+            <div className="md:col-span-6 md:col-start-7 md:pb-10">
+              {active && offer ? (
+                <Reveal>
+                  <p className="max-w-[40ch] border-t border-kk-ivory/15 pt-8 text-[1.05rem] leading-relaxed text-kk-ivory/80">
+                    {fill(copy.offer, { discount: offer.discountPercent })}{" "}
+                    {offer.remaining !== null ? (
+                      <span className="text-kk-sand">
+                        {fill(copy.remaining, {
+                          count: offer.remaining,
+                          limit: offer.limit,
+                        })}
+                      </span>
+                    ) : null}
                   </p>
-                ) : null}
-                <p className="max-w-[26ch] pb-1 text-[1.05rem] leading-snug">
-                  {fill(finalCta.founder, { discount: offer.discountPercent })}
-                </p>
-              </div>
-            ) : (
-              <p className="max-w-[36ch] text-[1.05rem]">{finalCta.soldOut}</p>
-            )}
-          </Reveal>
-          <Reveal delay={0.1} className="lg:col-span-5 lg:col-start-8 lg:justify-self-end">
-            <ActionLink variant="light">{finalCta.cta}</ActionLink>
-          </Reveal>
+                </Reveal>
+              ) : null}
+              <Reveal delay={0.1} className="mt-10">
+                <ActionLink variant="light">{copy.cta}</ActionLink>
+              </Reveal>
+            </div>
+          </div>
         </div>
+      </div>
 
-        <div className="mt-24 grid gap-10 rounded-[2px] bg-black/10 p-[clamp(24px,4vw,56px)] lg:mt-32 lg:grid-cols-12 lg:gap-8">
+      <div className="bg-kk-beige">
+        <div className="kk-container grid gap-10 py-[clamp(64px,8vw,112px)] lg:grid-cols-12 lg:gap-x-10">
           <div className="lg:col-span-5">
-            <p className="font-display text-[clamp(1.9rem,3vw,2.8rem)] leading-[1.05]">{lead.title}</p>
-            <p className="mt-4 max-w-[34ch] text-white/80">{lead.text}</p>
+            <p className="kk-display text-[clamp(1.9rem,3vw,2.8rem)]">
+              {lead.title}
+            </p>
+            <p className="kk-lead mt-4 max-w-[38ch] text-kk-ink/72">
+              {lead.text}
+            </p>
           </div>
           <div className="lg:col-span-6 lg:col-start-7">
-            <LeadForm copy={lead} kind="guide" locale={copy.locale} tone="dark" />
+            <LeadForm copy={lead} kind="guide" locale={locale} />
           </div>
         </div>
       </div>

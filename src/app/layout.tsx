@@ -9,6 +9,8 @@ const cormorant = Cormorant_Garamond({
   style: ["normal", "italic"],
   variable: "--font-cormorant",
   display: "swap",
+  // Pas de préchargement : la landing (route la plus visitée) n'utilise pas ces polices.
+  preload: false,
 });
 
 const dmSans = DM_Sans({
@@ -16,6 +18,7 @@ const dmSans = DM_Sans({
   weight: ["300", "400", "500"],
   variable: "--font-dm-sans",
   display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -31,7 +34,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" className={`${cormorant.variable} ${dmSans.variable}`}>
+    // suppressHydrationWarning : le script ci-dessous ajoute une classe à <html> avant l'hydratation.
+    <html
+      lang="fr"
+      className={`${cormorant.variable} ${dmSans.variable}`}
+      suppressHydrationWarning
+    >
+      <head>
+        {/* Landing : les animations d'apparition ne s'activent que si JavaScript tourne (sinon tout reste visible). */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: "document.documentElement.classList.add('kk-anim')",
+          }}
+        />
+      </head>
       <body>
         <AppProviders>{children}</AppProviders>
       </body>

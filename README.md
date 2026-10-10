@@ -193,16 +193,29 @@ Chaque module de `features/` suit la même organisation : `components/`, `hooks/
 
 ## Landing page
 
-La page d'accueil (`/`) suit l'ordre du cahier des charges V1 (section 5). Direction artistique : une galerie, avec des vêtements accrochés comme des œuvres et un fil de couture qui relie les sections.
+Pages : `/es` (langue par défaut), `/en`, `/ca`, `/fr`. La racine `/` redirige vers la langue du navigateur.
+Direction : *quiet luxury* et héritage malien. Ivoire, blanc et encre ; la couleur vient de la vidéo et de ses quatre œuvres (bogolan, Paris, Barcelone, carte du Mali).
 
 | Quoi | Où |
 |---|---|
-| Textes (français) | `src/features/landing/content/fr.ts` (une langue = un fichier de même forme) |
+| Textes (4 langues) | `src/features/landing/i18n/` : `fr.ts` (référence), `es.ts`, `en.ts`, `ca.ts` |
 | Sections | `src/features/landing/components/` |
-| Illustrations SVG | `src/features/landing/art/`, en attendant les visuels de Kadel Kouture |
-| Animations | `src/features/landing/motion/` (librairie `motion`, respecte « réduire les animations ») |
-| Catalogue et prix | `src/common/services.ts` (grille de la section 6) et `src/common/offer.ts` (tarif fondateur) |
-| Chiffres affichés (places restantes, vêtements sauvés) | `GET /api/landing/stats` dans `kadel-backend` |
+| Logotype, pictogrammes, dessins au trait | `src/features/landing/art/` |
+| Animations | `src/features/landing/motion/` et `landing.css` : CSS + un seul IntersectionObserver, respecte « réduire les animations » |
+| Vidéo et images | `public/media/` (voir ci-dessous) |
+| Catalogue et prix | `src/common/services.ts` (grille de la section 6) |
+| Offre fondateur et compteurs | `GET /api/landing/stats` dans `kadel-backend` (aucun chiffre affiché sans donnée réelle) |
+
+### Médias du hero
+
+| Fichier | Rôle |
+|---|---|
+| `kadel-hero.mp4` / `.webm` | Vidéo d'origine (848 × 480), servie sur mobile et tablette |
+| `kadel-hero-hd.mp4` | Même vidéo agrandie (lanczos + netteté), servie sur grand écran |
+| `kadel-hero-poster.jpg` | Image affichée avant la vidéo (identique à la seconde 1) |
+| `scene-*.jpg` | Une image fixe par scène, réutilisée dans les sections |
+
+La vidéo fournie est une version compressée par WhatsApp. Dès que le fichier d'origine (1080p ou plus) est disponible, il suffit de remplacer ces fichiers en gardant les mêmes noms.
 
 La base est un PostgreSQL en conteneur, géré par `kadel-backend` (`npm run db:up` puis `npm run db:migrate`, voir son README).
 

@@ -22,18 +22,16 @@
   /* Rayon des cartes (pas les pilules, celles-ci utilisent rounded-full) */
   --radius-card: 18px;
 
-  /* Charte V1 (cahier des charges, section 4) — landing page */
-  --color-paper: #f6f1ea;
-  --color-sand: #e8dccb;
-  --color-night: #1a1714;
-  --color-terracotta: #b5552d;
-  --color-ochre: #c9962e;
-  --color-brass: #b8964f;
-  --color-forest: #1f4a3a;
+  /* Landing page uniquement (préfixe kk-) : palette « quiet luxury » */
+  --color-kk-ivory: #f7f4ee;
+  --color-kk-white: #ffffff;
+  --color-kk-ink: #171715;
+  --color-kk-beige: #e7ded0;
+  --color-kk-sand: #d5c6b2;
 
   /* Redéfinies par .kk-site avec les polices chargées par next/font */
-  --font-display: "Lora", Georgia, serif;
-  --font-body: "Open Sans", system-ui, sans-serif;
+  --font-display: "DM Serif Display", Georgia, serif;
+  --font-body: "Plus Jakarta Sans", system-ui, sans-serif;
 }
 
 body {

@@ -1,304 +1,290 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { useRef, useState } from "react";
-import { AnimatePresence, LayoutGroup, motion } from "motion/react";
+import { useRef, useState, type CSSProperties } from "react";
 import {
   CATALOGUE_GARMENTS,
   MIN_BASKET,
   NEW_PRICE,
   QUOTE_TOLERANCE_PERCENT,
-  lowestPrice,
   orderHref,
   servicesFor,
   type CatalogueGarment,
-  type ServiceCategory,
+  type CatalogueService,
 } from "@/common/services";
-import { EmbroideryArt, GarmentArt, UpcyclingArt } from "../art/Garments";
-import { ArrowIcon } from "../art/Ornaments";
-import type { LandingCopy } from "../content/fr";
+import type { LandingDictionary } from "../i18n/fr";
+import type { Locale } from "../i18n/locales";
 import { cx } from "../lib/cx";
+import { emphasis } from "../lib/emphasis";
 import { fill } from "../lib/fill";
-import { EASE_IN_OUT, EASE_OUT } from "../motion/ease";
-import { Parallax } from "../motion/Parallax";
+import { formatPrice } from "../lib/price";
 import { Reveal } from "../motion/Reveal";
 import { SplitLines } from "../motion/SplitLines";
-import { ArtReveal } from "../motion/ArtReveal";
-import { ActionLink, Frame, SectionLabel } from "./ui";
+import { SectionLabel } from "./ui";
 
-const CREATIVE: ServiceCategory[] = ["personnalisation", "upcycling"];
+const CREATIVE = new Set(["personnalisation", "upcycling"]);
+
+function ServiceRow({
+  service,
+  garment,
+  copy,
+  locale,
+  index,
+  dark = false,
+}: {
+  service: CatalogueService;
+  garment: CatalogueGarment;
+  copy: LandingDictionary["services"];
+  locale: Locale;
+  index: number;
+  dark?: boolean;
+}) {
+  return (
+    <li
+      className={cx(
+        "kk-row-in border-b",
+        dark ? "border-kk-ivory/15" : "border-kk-ink/12",
+      )}
+      style={{ "--i": index } as CSSProperties}
+    >
+      <Link
+        href={orderHref(service.id, garment)}
+        className="group grid grid-cols-[1fr_auto] items-center gap-x-6 gap-y-1 py-5"
+      >
+        {/* « Commander : » pour les lecteurs d'écran ; le texte visible reste dans le nom du lien. */}
+        <span className="sr-only">{fill(copy.order, { label: "" })}</span>
+        <span className="flex flex-col gap-1.5 transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:translate-x-1.5">
+          <span
+            className={cx(
+              "kk-caps",
+              dark ? "text-kk-ivory/65" : "text-kk-ink/70",
+            )}
+          >
+            {copy.categories[service.category]}
+          </span>
+          <span className="text-[1.02rem] leading-snug font-medium">
+            {copy.items[service.id]}
+          </span>
+        </span>
+        <span className="flex items-center gap-4 whitespace-nowrap">
+          <span className="text-right">
+            <span
+              className={cx(
+                "mr-2 text-[0.7rem]",
+                dark ? "text-kk-ivory/65" : "text-kk-ink/70",
+              )}
+            >
+              {copy.from}
+            </span>
+            <span className="font-display text-[1.5rem]">
+              {formatPrice(locale, service.fromPrice)}
+            </span>
+          </span>
+          <span
+            aria-hidden="true"
+            className="hidden h-px w-4 bg-current opacity-40 transition-[width,opacity] duration-500 group-hover:w-8 group-hover:opacity-100 sm:block"
+          />
+        </span>
+      </Link>
+    </li>
+  );
+}
 
 /**
- * 5.5 — Engagement par micro-étapes et ancrage de prix.
- * On choisit d'abord son vêtement, puis on voit les prestations « à partir de »,
- * comparées au prix du neuf. Chaque ligne ouvre la commande présélectionnée.
+ * F — Prestations et prix. On choisit d'abord son vêtement (micro-engagement),
+ * puis on voit les prix « à partir de » comparés au neuf. Chaque ligne ouvre
+ * le formulaire de commande avec la prestation présélectionnée.
  */
-export function Services({ copy }: { copy: LandingCopy }) {
-  const { services } = copy;
+export function Services({
+  copy,
+  locale,
+}: {
+  copy: LandingDictionary["services"];
+  locale: Locale;
+}) {
   const [garment, setGarment] = useState<CatalogueGarment>("jean");
   const tabs = useRef<Array<HTMLButtonElement | null>>([]);
   const list = servicesFor(garment);
+  const repairs = list.filter((service) => !CREATIVE.has(service.category));
+  const creations = list.filter((service) => CREATIVE.has(service.category));
   const cheapest = Math.min(...list.map((service) => service.fromPrice));
 
   const onTabKeyDown = (event: React.KeyboardEvent, index: number) => {
-    const offset = event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
+    const offset =
+      event.key === "ArrowRight" ? 1 : event.key === "ArrowLeft" ? -1 : 0;
     if (!offset) return;
     event.preventDefault();
-    const next = (index + offset + CATALOGUE_GARMENTS.length) % CATALOGUE_GARMENTS.length;
+    const next =
+      (index + offset + CATALOGUE_GARMENTS.length) % CATALOGUE_GARMENTS.length;
     setGarment(CATALOGUE_GARMENTS[next]);
     tabs.current[next]?.focus();
   };
 
   return (
-    <section id="prestations" aria-labelledby="services-title" className="kk-section bg-sand">
+    <section
+      id="services"
+      aria-labelledby="services-title"
+      className="kk-section bg-kk-white"
+    >
       <div className="kk-container">
-        <div className="grid gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            <SectionLabel index={services.index} label={services.label} className="mb-8" />
+        <div className="grid gap-10 md:grid-cols-12 md:items-end">
+          <div className="md:col-span-7">
+            <SectionLabel className="mb-8 text-kk-ink/70">
+              {copy.label}
+            </SectionLabel>
             <SplitLines
               as="h2"
               id="services-title"
-              lines={services.title}
-              className="kk-display text-[clamp(2.6rem,5.6vw,5.6rem)]"
+              lines={copy.title}
+              className="kk-display text-[clamp(2.4rem,5vw,5rem)]"
             />
           </div>
+          <Reveal className="md:col-span-4 md:col-start-9">
+            <p className="kk-lead text-kk-ink/72">{copy.intro}</p>
+          </Reveal>
         </div>
 
         {/* Choix du vêtement */}
-        <Reveal className="mt-14 lg:mt-20">
-          <p className="kk-label mb-5 text-night/55">{services.pick}</p>
-          <LayoutGroup>
-            <div
-              role="tablist"
-              aria-label={services.pick}
-              className="flex flex-wrap gap-x-[clamp(1.25rem,3.4vw,3.25rem)] gap-y-3 border-b border-night/15 pb-4"
-            >
-              {CATALOGUE_GARMENTS.map((item, index) => {
-                const selected = item === garment;
-                return (
-                  <button
-                    key={item}
-                    ref={(node) => {
-                      tabs.current[index] = node;
-                    }}
-                    type="button"
-                    role="tab"
-                    id={`garment-tab-${item}`}
-                    aria-selected={selected}
-                    aria-controls="services-panel"
-                    tabIndex={selected ? 0 : -1}
-                    onClick={() => setGarment(item)}
-                    onKeyDown={(event) => onTabKeyDown(event, index)}
+        <Reveal className="mt-16 md:mt-24">
+          <p className="kk-caps mb-5 text-kk-ink/70">{copy.pick}</p>
+          <div
+            role="tablist"
+            aria-label={copy.pick}
+            className="flex flex-wrap gap-x-[clamp(1.25rem,3vw,3rem)] gap-y-2 border-b border-kk-ink/15"
+          >
+            {CATALOGUE_GARMENTS.map((item, index) => {
+              const selected = item === garment;
+              return (
+                <button
+                  key={item}
+                  ref={(node) => {
+                    tabs.current[index] = node;
+                  }}
+                  type="button"
+                  role="tab"
+                  id={`garment-tab-${item}`}
+                  aria-selected={selected}
+                  aria-controls="services-panel"
+                  tabIndex={selected ? 0 : -1}
+                  onClick={() => setGarment(item)}
+                  onKeyDown={(event) => onTabKeyDown(event, index)}
+                  className={cx(
+                    "relative pb-4 font-display text-[clamp(1.6rem,3.2vw,2.8rem)] leading-none transition-colors duration-500",
+                    selected
+                      ? "text-kk-ink italic"
+                      : "text-kk-ink/70 hover:text-kk-ink/80",
+                  )}
+                >
+                  {copy.garments[item]}
+                  <span
+                    aria-hidden="true"
                     className={cx(
-                      "relative pb-2 font-display text-[clamp(1.9rem,4.2vw,3.6rem)] leading-none transition-colors duration-500",
-                      selected ? "text-night italic" : "text-night/30 hover:text-night/60",
+                      "absolute right-0 -bottom-px left-0 h-px origin-left bg-kk-ink transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)]",
+                      selected ? "scale-x-100" : "scale-x-0",
                     )}
-                  >
-                    {services.garments[item]}
-                    {selected ? (
-                      <motion.span
-                        layoutId="garment-underline"
-                        aria-hidden="true"
-                        className="absolute right-0 -bottom-[17px] left-0 h-[2px] bg-terracotta"
-                        transition={{ duration: 0.6, ease: EASE_OUT }}
-                      />
-                    ) : null}
-                  </button>
-                );
-              })}
-            </div>
-          </LayoutGroup>
+                  />
+                </button>
+              );
+            })}
+          </div>
+          <p className="mt-6 flex flex-wrap items-baseline gap-x-6 gap-y-2 text-[0.95rem] text-kk-ink/70">
+            <span>
+              {copy.anchor[garment]}{" "}
+              <span className="font-display text-[1.2rem] line-through decoration-1">
+                {formatPrice(locale, NEW_PRICE[garment])}
+              </span>
+            </span>
+            <span
+              aria-hidden="true"
+              className="hidden h-px w-6 bg-kk-ink/25 sm:block"
+            />
+            <span>
+              {copy.repairFrom}{" "}
+              <span className="font-display text-[1.2rem] text-kk-ink italic">
+                {formatPrice(locale, cheapest)}
+              </span>
+            </span>
+          </p>
         </Reveal>
 
         <div
           id="services-panel"
           role="tabpanel"
           aria-labelledby={`garment-tab-${garment}`}
-          className="mt-14 grid gap-14 lg:mt-20 lg:grid-cols-12 lg:gap-10"
+          className="mt-14 grid gap-12 lg:mt-20 lg:grid-cols-12 lg:gap-x-10"
         >
-          {/* L'œuvre et l'ancrage de prix */}
-          <div className="lg:sticky lg:top-28 lg:col-span-4 lg:self-start">
-            <div className="mx-auto max-w-[22rem] lg:mx-0">
-              <Frame variant="oak">
-                <div className="relative aspect-[4/5]">
-                  <AnimatePresence initial={false} mode="popLayout">
-                    <motion.div
-                      key={garment}
-                      className="absolute inset-0"
-                      initial={{ clipPath: "inset(0% 0% 0% 100%)" }}
-                      animate={{ clipPath: "inset(0% 0% 0% 0%)" }}
-                      exit={{ opacity: 0 }}
-                      transition={{ clipPath: { duration: 0.9, ease: EASE_IN_OUT }, opacity: { duration: 0.6 } }}
-                    >
-                      <GarmentArt kind={garment} title={services.artAlt[garment]} />
-                    </motion.div>
-                  </AnimatePresence>
-                </div>
-              </Frame>
+          <div className="lg:col-span-7">
+            <p className="kk-caps border-b border-kk-ink/15 pb-4 text-kk-ink/70">
+              {copy.repairGroup}
+            </p>
+            <ul>
+              {repairs.map((service, index) => (
+                <ServiceRow
+                  key={`${garment}-${service.id}`}
+                  service={service}
+                  garment={garment}
+                  copy={copy}
+                  locale={locale}
+                  index={index}
+                />
+              ))}
+            </ul>
 
-              <div className="mt-8 grid grid-cols-2 gap-6 border-t border-night/15 pt-6">
-                <p className="flex flex-col gap-1.5">
-                  <span className="text-[0.7rem] font-mono font-bold tracking-[0.12em] text-night/55 uppercase">
-                    {services.anchor[garment]}
-                  </span>
-                  <span className="font-display text-[2rem] leading-none text-night/45 line-through decoration-terracotta decoration-2">
-                    {NEW_PRICE[garment]}&nbsp;€
-                  </span>
-                </p>
-                <p className="flex flex-col gap-1.5">
-                  <span className="text-[0.7rem] font-mono font-bold tracking-[0.12em] text-night/55 uppercase">
-                    {services.repairFrom}
-                  </span>
-                  <span className="font-display text-[2rem] leading-none text-terracotta italic">
-                    {cheapest}&nbsp;€
-                  </span>
-                </p>
-              </div>
-            </div>
-          </div>
-
-          {/* Les prestations */}
-          <div className="lg:col-span-7 lg:col-start-6">
-            <motion.ul layout className="border-b border-night/15">
-              <AnimatePresence initial={false} mode="popLayout">
-                {list.map((service, index) => {
-                  const creative = CREATIVE.includes(service.category);
-                  const label = services.items[service.id];
-                  return (
-                    <motion.li
-                      key={service.id}
-                      layout
-                      initial={{ opacity: 0, y: 18 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0 }}
-                      transition={{ duration: 0.6, ease: EASE_OUT, delay: index * 0.035 }}
-                    >
-                      <Link
-                        href={orderHref(service.id, garment)}
-                        aria-label={fill(services.order, { label })}
-                        className="group relative isolate grid grid-cols-[1fr_auto] items-center gap-x-6 border-t border-night/15 py-5 sm:grid-cols-[1fr_auto_auto] sm:py-6"
-                      >
-                        <span
-                          aria-hidden="true"
-                          className="absolute inset-0 -z-10 origin-left scale-x-0 bg-paper transition-transform duration-700 ease-[cubic-bezier(.22,1,.36,1)] group-hover:scale-x-100 group-focus-visible:scale-x-100"
-                        />
-                        <span className="flex flex-col gap-1.5 transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:translate-x-3">
-                          <span className="flex items-center gap-2 text-[0.66rem] font-mono font-bold tracking-[0.12em] text-night/50 uppercase">
-                            {services.categories[service.category]}
-                            {creative ? (
-                              <span className="rounded-full bg-ochre/20 px-2 py-0.5 tracking-[0.14em] text-[#7a5a14]">
-                                {services.creativeTag}
-                              </span>
-                            ) : null}
-                          </span>
-                          <span className="font-display text-[clamp(1.2rem,1.9vw,1.55rem)] leading-snug">
-                            {label}
-                          </span>
-                        </span>
-                        <span className="text-right font-display text-[clamp(1.4rem,2.2vw,1.9rem)] whitespace-nowrap">
-                          <span className="mr-1.5 font-body text-[0.7rem] font-mono font-bold tracking-[0.12em] text-night/50 uppercase">
-                            {services.from}
-                          </span>
-                          {service.fromPrice}&nbsp;€
-                        </span>
-                        <span className="hidden h-10 w-10 -translate-x-2 place-items-center rounded-full bg-night text-paper opacity-0 transition duration-500 group-hover:translate-x-0 group-hover:opacity-100 group-focus-visible:opacity-100 sm:grid">
-                          <ArrowIcon />
-                        </span>
-                      </Link>
-                    </motion.li>
-                  );
+            <ul className="mt-10 grid gap-2 text-[0.88rem] leading-relaxed text-kk-ink/70">
+              <li>
+                {copy.notes.bundle}{" "}
+                {fill(copy.notes.minimum, {
+                  amount: formatPrice(locale, MIN_BASKET),
                 })}
-              </AnimatePresence>
-            </motion.ul>
-
-            <ul className="mt-8 grid gap-2 text-[0.88rem] leading-relaxed text-night/65">
-              <li className="flex gap-3">
-                <span aria-hidden="true" className="text-terracotta">×</span>
-                {services.notes.delivery}
               </li>
-              <li className="flex gap-3">
-                <span aria-hidden="true" className="text-terracotta">×</span>
-                {services.notes.bundle} {fill(services.notes.minimum, { amount: MIN_BASKET })}
-              </li>
-              <li className="flex gap-3">
-                <span aria-hidden="true" className="text-terracotta">×</span>
-                {fill(services.notes.quote, { percent: QUOTE_TOLERANCE_PERCENT })}
+              <li>
+                {fill(copy.notes.quote, { percent: QUOTE_TOLERANCE_PERCENT })}
               </li>
             </ul>
           </div>
-        </div>
 
-        <CreativeBand copy={copy} />
+          {/* Créer : la personnalisation et l'upcycling, mis en avant */}
+          <div className="kk-on-dark bg-kk-ink text-kk-ivory lg:col-span-5">
+            <div className="relative aspect-[16/9] overflow-hidden bg-kk-beige">
+              <Image
+                src="/media/scene-bogolan.jpg"
+                alt={copy.create.imageAlt}
+                fill
+                sizes="(min-width: 1024px) 38vw, 100vw"
+                className="object-cover"
+                style={{ objectPosition: "45% 30%" }}
+              />
+            </div>
+            <div className="p-[clamp(24px,3.5vw,44px)]">
+              <p className="kk-label text-kk-sand">{copy.create.label}</p>
+              <h3 className="kk-display mt-6 text-[clamp(2rem,3vw,2.8rem)]">
+                {copy.create.title.map((line, index) => (
+                  <span key={index} className="block">
+                    {emphasis(line)}
+                  </span>
+                ))}
+              </h3>
+              <p className="mt-5 max-w-[40ch] text-[0.98rem] leading-relaxed text-kk-ivory/70">
+                {copy.create.text}
+              </p>
+              <ul className="mt-8 border-t border-kk-ivory/15">
+                {creations.map((service, index) => (
+                  <ServiceRow
+                    key={`${garment}-${service.id}`}
+                    service={service}
+                    garment={garment}
+                    copy={copy}
+                    locale={locale}
+                    index={index}
+                    dark
+                  />
+                ))}
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
-  );
-}
-
-/** Personnalisation et upcycling mis en avant : ce sont les paniers qui font vivre le modèle. */
-function CreativeBand({ copy }: { copy: LandingCopy }) {
-  const { services } = copy;
-  const { creative } = services;
-
-  const pieces = [
-    {
-      key: "personnalisation",
-      copy: creative.personalise,
-      price: lowestPrice("personnalisation"),
-      href: orderHref("broderie"),
-      art: <EmbroideryArt title={creative.personalise.alt} />,
-      frame: "black" as const,
-      className: "lg:col-span-5 lg:col-start-1",
-    },
-    {
-      key: "upcycling",
-      copy: creative.transform,
-      price: lowestPrice("upcycling"),
-      href: orderHref("transformation"),
-      art: <UpcyclingArt title={creative.transform.alt} />,
-      frame: "white" as const,
-      className: "lg:col-span-5 lg:col-start-8 lg:mt-48",
-    },
-  ];
-
-  return (
-    <div className="mt-32 lg:mt-48">
-      <SplitLines
-        as="h3"
-        lines={creative.title}
-        className="kk-display max-w-[14ch] text-[clamp(2.4rem,4.6vw,4.6rem)]"
-      />
-      <div className="mt-14 grid gap-20 lg:grid-cols-12 lg:gap-x-8 lg:gap-y-0">
-        {pieces.map((piece) => (
-          <figure key={piece.key} className={piece.className}>
-            <Parallax offset={piece.key === "upcycling" ? 50 : 20}>
-              <Frame variant={piece.frame}>
-                <ArtReveal>{piece.art}</ArtReveal>
-              </Frame>
-            </Parallax>
-            <Reveal>
-              <figcaption className="mt-10 grid gap-4">
-                <div className="flex items-baseline justify-between gap-6 border-b border-night/15 pb-4">
-                  <p className="font-display text-[clamp(2rem,3vw,2.8rem)] leading-none italic">
-                    {piece.copy.title}
-                  </p>
-                  <p className="font-display text-[1.5rem] whitespace-nowrap">
-                    <span className="mr-1.5 font-body text-[0.7rem] font-mono font-bold tracking-[0.12em] text-night/50 uppercase">
-                      {services.from}
-                    </span>
-                    {piece.price}&nbsp;€
-                  </p>
-                </div>
-                <p className="max-w-[40ch] text-night/70">{piece.copy.text}</p>
-                <div className="mt-2">
-                  <ActionLink href={piece.href} variant="ghost">
-                    {piece.copy.cta}
-                  </ActionLink>
-                </div>
-              </figcaption>
-            </Reveal>
-          </figure>
-        ))}
-      </div>
-    </div>
   );
 }

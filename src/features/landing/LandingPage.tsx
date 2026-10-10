@@ -1,60 +1,65 @@
 import { AnnouncementBar } from "./components/AnnouncementBar";
-import { BeforeAfter } from "./components/BeforeAfter";
+import { Ateliers } from "./components/Ateliers";
 import { Brands } from "./components/Brands";
 import { Faq } from "./components/Faq";
 import { FinalCta } from "./components/FinalCta";
+import { Footer } from "./components/Footer";
+import { Founder } from "./components/Founder";
 import { Guarantee } from "./components/Guarantee";
+import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { HowItWorks } from "./components/HowItWorks";
-import { JoinNetwork } from "./components/JoinNetwork";
-import { Problem } from "./components/Problem";
+import { JoinAteliers } from "./components/JoinAteliers";
+import { ProblemSolution } from "./components/ProblemSolution";
 import { Services } from "./components/Services";
-import { SiteFooter } from "./components/SiteFooter";
-import { SiteHeader } from "./components/SiteHeader";
 import { StickyCta } from "./components/StickyCta";
 import { Story } from "./components/Story";
-import { Workshops } from "./components/Workshops";
-import type { LandingCopy } from "./content/fr";
+import { Transformations } from "./components/Transformations";
+import type { LandingDictionary } from "./i18n/fr";
+import type { Locale } from "./i18n/locales";
+import { RevealObserver } from "./motion/RevealObserver";
 import type { FounderOffer } from "./types";
-import { MotionProvider } from "./motion/MotionProvider";
 
 interface LandingPageProps {
-  copy: LandingCopy;
+  locale: Locale;
+  t: LandingDictionary;
   offer: FounderOffer | null;
-  savedGarments: number | null;
 }
 
 /**
- * Ordre fixe du cahier des charges (section 5) :
- * capter, faire se reconnaître, rassurer, prouver, faire agir.
+ * Récit du premier écran à l'appel final :
+ * capter, faire se reconnaître, expliquer, prouver, rassurer, faire agir —
+ * puis les deux publics professionnels (ateliers, marques).
  */
-export function LandingPage({ copy, offer, savedGarments }: LandingPageProps) {
+export function LandingPage({ locale, t, offer }: LandingPageProps) {
   return (
-    <MotionProvider>
+    <div lang={locale}>
       <a
-        href="#contenu"
-        className="sr-only z-[90] rounded-full bg-night px-5 py-3 text-paper focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
+        href="#content"
+        className="sr-only z-90 bg-kk-ink px-5 py-3 text-kk-ivory focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
       >
-        {copy.skipLink}
+        {t.skip}
       </a>
-      <AnnouncementBar copy={copy} offer={offer} />
-      <SiteHeader copy={copy} />
-      <main id="contenu" className="overflow-x-clip">
-        <Hero copy={copy} />
-        <Problem copy={copy} />
-        <HowItWorks copy={copy} />
-        <Services copy={copy} />
-        <BeforeAfter copy={copy} />
-        <Workshops copy={copy} savedGarments={savedGarments} />
-        <Story copy={copy} />
-        <Guarantee copy={copy} />
-        <Faq copy={copy} />
-        <FinalCta copy={copy} offer={offer} />
-        <JoinNetwork copy={copy} />
-        <Brands copy={copy} />
+      <AnnouncementBar t={t} offer={offer} />
+      <Header nav={t.nav} locale={locale} />
+      <main id="content" className="overflow-x-clip">
+        <Hero t={t} />
+        <Story t={t} locale={locale} />
+        <ProblemSolution t={t} locale={locale} />
+        <HowItWorks t={t} />
+        <Services copy={t.services} locale={locale} />
+        <Transformations t={t} />
+        <Ateliers t={t} />
+        <Founder t={t} />
+        <Guarantee t={t} />
+        <Faq copy={t.faq} />
+        <FinalCta t={t} locale={locale} offer={offer} />
+        <JoinAteliers t={t} />
+        <Brands t={t} />
       </main>
-      <SiteFooter copy={copy} />
-      <StickyCta copy={copy} />
-    </MotionProvider>
+      <Footer t={t} locale={locale} />
+      <StickyCta cta={t.sticky.cta} note={t.sticky.note} />
+      <RevealObserver />
+    </div>
   );
 }

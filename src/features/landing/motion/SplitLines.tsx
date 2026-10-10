@@ -1,9 +1,6 @@
-"use client";
-
-import { motion } from "motion/react";
-import { emphasis } from "../lib/emphasis";
+import type { CSSProperties } from "react";
 import { cx } from "../lib/cx";
-import { EASE_OUT } from "./ease";
+import { emphasis } from "../lib/emphasis";
 
 interface SplitLinesProps {
   /** Une entrée par ligne : les retours à la ligne sont un choix typographique. */
@@ -13,12 +10,17 @@ interface SplitLinesProps {
   className?: string;
   /** Classes par ligne (indentations, décalages). */
   lineClassNames?: Array<string | undefined>;
+  /** Délai en secondes. */
   delay?: number;
+  /** Écart entre deux lignes, en secondes. */
   stagger?: number;
   onMount?: boolean;
 }
 
-/** Titre révélé ligne par ligne, chaque ligne sortant de son propre masque. */
+/**
+ * Titre révélé ligne par ligne, chaque ligne sortant de son propre masque.
+ * Composant serveur : l'animation est en CSS (landing.css), déclenchée par RevealObserver.
+ */
 export function SplitLines({
   lines,
   as: Tag = "h2",
@@ -29,38 +31,28 @@ export function SplitLines({
   stagger = 0.09,
   onMount = false,
 }: SplitLinesProps) {
-  const trigger = onMount
-    ? { animate: "shown" }
-    : {
-        whileInView: "shown",
-        viewport: { once: true, margin: "0px 0px -12% 0px" },
-      };
-
   return (
-    <Tag id={id} className={className}>
-      <motion.span
-        className="block"
-        initial="hidden"
-        variants={{
-          hidden: {},
-          shown: { transition: { staggerChildren: stagger, delayChildren: delay } },
-        }}
-        {...trigger}
-      >
-        {lines.map((line, index) => (
-          <span key={index} className={cx("kk-line", lineClassNames?.[index])}>
-            <motion.span
-              className="kk-line__inner"
-              variants={{
-                hidden: { y: "112%" },
-                shown: { y: "0%", transition: { duration: 1.2, ease: EASE_OUT } },
-              }}
-            >
-              {emphasis(line)}
-            </motion.span>
+    <Tag
+      id={id}
+      className={className}
+      data-reveal={onMount ? "lines-mount" : "lines"}
+      style={
+        {
+          "--kk-delay": `${delay}s`,
+          "--kk-stagger": `${stagger}s`,
+        } as CSSProperties
+      }
+    >
+      {lines.map((line, index) => (
+        <span key={index} className={cx("kk-line", lineClassNames?.[index])}>
+          <span
+            className="kk-line__inner"
+            style={{ "--i": index } as CSSProperties}
+          >
+            {emphasis(line)}
           </span>
-        ))}
-      </motion.span>
+        </span>
+      ))}
     </Tag>
   );
 }

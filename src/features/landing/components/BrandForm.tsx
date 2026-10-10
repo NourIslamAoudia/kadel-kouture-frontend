@@ -1,23 +1,31 @@
 "use client";
 
 import { useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
 import { API_URL } from "@shared/lib/api";
-import type { LandingCopy } from "../content/fr";
-import { EASE_OUT } from "../motion/ease";
+import type { LandingDictionary } from "../i18n/fr";
 
 const EMAIL = /^\S+@\S+\.\S+$/;
 
-/** 5.13 — Formulaire court pour les marques : nom, marque, email, besoin. */
-export function BrandForm({ copy }: { copy: LandingCopy["brands"] }) {
-  const [values, setValues] = useState({ fullName: "", brand: "", email: "", need: "", website: "" });
-  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">("idle");
+/** N — Formulaire court pour les marques : nom, marque, email, besoin (POST /api/brand-requests). */
+export function BrandForm({ copy }: { copy: LandingDictionary["brands"] }) {
+  const [values, setValues] = useState({
+    fullName: "",
+    brand: "",
+    email: "",
+    need: "",
+    website: "",
+  });
+  const [status, setStatus] = useState<"idle" | "sending" | "done" | "error">(
+    "idle",
+  );
   const [message, setMessage] = useState<string | null>(null);
 
-  const update = (field: keyof typeof values) => (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setValues((current) => ({ ...current, [field]: event.target.value }));
-    setMessage(null);
-  };
+  const update =
+    (field: keyof typeof values) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setValues((current) => ({ ...current, [field]: event.target.value }));
+      setMessage(null);
+    };
 
   const submit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -44,51 +52,61 @@ export function BrandForm({ copy }: { copy: LandingCopy["brands"] }) {
   };
 
   const fields = [
-    { name: "fullName" as const, label: copy.fields.name, type: "text", autoComplete: "name" },
-    { name: "brand" as const, label: copy.fields.brand, type: "text", autoComplete: "organization" },
-    { name: "email" as const, label: copy.fields.email, type: "email", autoComplete: "email" },
+    {
+      name: "fullName" as const,
+      label: copy.fields.name,
+      type: "text",
+      autoComplete: "name",
+    },
+    {
+      name: "brand" as const,
+      label: copy.fields.brand,
+      type: "text",
+      autoComplete: "organization",
+    },
+    {
+      name: "email" as const,
+      label: copy.fields.email,
+      type: "email",
+      autoComplete: "email",
+    },
   ];
 
   return (
-    <AnimatePresence mode="wait" initial={false}>
+    <>
       {status === "done" ? (
-        <motion.p
-          key="done"
+        <p
           role="status"
-          initial={{ opacity: 0, y: 12 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: EASE_OUT }}
-          className="font-display text-[clamp(1.6rem,2.4vw,2.1rem)] italic"
+          className="kk-fade-in font-display text-[clamp(1.6rem,2.4vw,2.1rem)] italic"
         >
           {copy.success}
-        </motion.p>
+        </p>
       ) : (
-        <motion.form key="form" onSubmit={submit} noValidate exit={{ opacity: 0 }} className="grid gap-8">
-          <div className="grid gap-8 sm:grid-cols-2">
+        <form onSubmit={submit} noValidate className="relative grid gap-9">
+          <div className="grid gap-9 sm:grid-cols-2">
             {fields.map((field) => (
-              <label key={field.name} className={field.name === "email" ? "sm:col-span-2" : undefined}>
-                <span className="text-[0.68rem] font-mono font-bold tracking-[0.12em] text-night/55 uppercase">
-                  {field.label}
-                </span>
+              <label
+                key={field.name}
+                className={field.name === "email" ? "sm:col-span-2" : undefined}
+              >
+                <span className="kk-caps text-kk-ink/70">{field.label}</span>
                 <input
                   type={field.type}
                   autoComplete={field.autoComplete}
                   value={values[field.name]}
                   onChange={update(field.name)}
-                  className="kk-field border-night/30"
+                  className="kk-field border-kk-ink/30"
                 />
               </label>
             ))}
             <label className="sm:col-span-2">
-              <span className="text-[0.68rem] font-mono font-bold tracking-[0.12em] text-night/55 uppercase">
-                {copy.fields.need}
-              </span>
+              <span className="kk-caps text-kk-ink/70">{copy.fields.need}</span>
               <textarea
                 rows={3}
                 placeholder={copy.needPlaceholder}
                 value={values.need}
                 onChange={update("need")}
-                className="kk-field border-night/30"
+                className="kk-field border-kk-ink/30"
               />
             </label>
           </div>
@@ -105,20 +123,20 @@ export function BrandForm({ copy }: { copy: LandingCopy["brands"] }) {
           />
 
           <div className="flex flex-wrap items-center gap-6">
-            <button type="submit" disabled={status === "sending"} className="kk-btn">
+            <button
+              type="submit"
+              disabled={status === "sending"}
+              className="kk-btn"
+            >
               <span>{status === "sending" ? copy.sending : copy.submit}</span>
-              <span className="kk-btn__icon" aria-hidden="true">
-                <svg viewBox="0 0 16 16" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="1.6">
-                  <path d="M3 8h10M9 4l4 4-4 4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              </span>
+              <span className="kk-btn__line" aria-hidden="true" />
             </button>
-            <p role="alert" className="text-[0.85rem] font-semibold text-terracotta">
+            <p role="alert" className="text-[0.88rem] font-semibold">
               {message}
             </p>
           </div>
-        </motion.form>
+        </form>
       )}
-    </AnimatePresence>
+    </>
   );
 }

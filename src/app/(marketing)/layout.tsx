@@ -1,31 +1,30 @@
-import { Lora, Open_Sans, Space_Mono } from "next/font/google";
+import { DM_Serif_Display, Plus_Jakarta_Sans } from "next/font/google";
 import "@features/landing/landing.css";
 
-// Titres : serif chaleureux et lisible, avec une vraie italique pour les mots mis en valeur.
-const display = Lora({
+// Titres : serif éditorial à fort contraste, avec une italique de couture.
+const display = DM_Serif_Display({
   subsets: ["latin"],
+  weight: "400",
   style: ["normal", "italic"],
   variable: "--font-landing-display",
   display: "swap",
 });
 
-// Texte courant.
-const body = Open_Sans({
+// Texte et interface : sans-serif net, lisible aux petites tailles.
+const body = Plus_Jakarta_Sans({
   subsets: ["latin"],
   variable: "--font-landing-body",
   display: "swap",
 });
 
-// Petits labels en capitales : monospace gras, façon étiquette d'atelier.
-const mono = Space_Mono({
-  subsets: ["latin"],
-  weight: ["400", "700"],
-  variable: "--font-landing-mono",
-  display: "swap",
-});
-
-export default function MarketingLayout({ children }: { children: React.ReactNode }) {
+export default function MarketingLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <div className={`${display.variable} ${body.variable} ${mono.variable} kk-site`}>{children}</div>
+    <div className={`${display.variable} ${body.variable} kk-site`}>
+      {children}
+    </div>
   );
 }

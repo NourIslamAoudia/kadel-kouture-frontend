@@ -1,75 +1,96 @@
-import { BarcelonaPoster, MaliPoster, ParisPoster } from "../art/CityPosters";
-import { BogolanRule } from "../art/Ornaments";
-import type { LandingCopy } from "../content/fr";
-import { ArtReveal } from "../motion/ArtReveal";
-import { Parallax } from "../motion/Parallax";
+import { NEW_PRICE, SERVICES, lowestPrice } from "@/common/services";
+import type { LandingDictionary } from "../i18n/fr";
+import type { Locale } from "../i18n/locales";
+import { formatPrice } from "../lib/price";
 import { Reveal } from "../motion/Reveal";
 import { SplitLines } from "../motion/SplitLines";
-import { Frame, SectionLabel } from "./ui";
+import { EditorialImage, SectionLabel } from "./ui";
 
 /**
- * 5.8 — Sympathie et unité : l'histoire de Kadja.
- * Texte à valider avec Kadja ; sa photo remplacera le triptyque dès qu'elle est fournie.
+ * C — L'attachement aux vêtements (cahier des charges 5.3) :
+ * on nomme la situation, on l'étiquette, puis l'aversion à la perte —
+ * « Le remplacer coûterait 80 €. Le réparer, à partir de 12 €. »
  */
-export function Story({ copy }: { copy: LandingCopy }) {
-  const { story } = copy;
-  const posters = [
-    { key: "mali", art: <MaliPoster title={story.posters.mali.alt} />, caption: story.posters.mali.caption, offset: 30, className: "mt-0" },
-    { key: "paris", art: <ParisPoster title={story.posters.paris.alt} />, caption: story.posters.paris.caption, offset: 70, className: "mt-16" },
-    { key: "barcelona", art: <BarcelonaPoster title={story.posters.barcelona.alt} />, caption: story.posters.barcelona.caption, offset: 45, className: "mt-6" },
-  ];
+export function Story({ t, locale }: { t: LandingDictionary; locale: Locale }) {
+  const { story, problem } = t;
+  const repairFrom =
+    SERVICES.find((service) => service.id === "reprise")?.fromPrice ??
+    lowestPrice("reparation");
 
   return (
     <section
-      id="histoire"
       aria-labelledby="story-title"
-      className="kk-section overflow-x-clip bg-forest text-paper"
-      style={{ ["--accent" as string]: "var(--color-ochre)" }}
+      className="kk-section overflow-x-clip"
     >
       <div className="kk-container">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-7">
-            <SectionLabel index={story.index} label={story.label} className="mb-8 text-paper/60" />
-            <SplitLines
-              as="h2"
-              id="story-title"
-              lines={story.title}
-              className="kk-display text-[clamp(2.7rem,6vw,6rem)]"
-              lineClassNames={[undefined, "pl-[10%]", undefined]}
+        <SectionLabel className="mb-8 text-kk-ink/70">
+          {story.label}
+        </SectionLabel>
+        <SplitLines
+          as="h2"
+          id="story-title"
+          lines={story.title}
+          className="kk-display text-[clamp(2.4rem,5.4vw,5.4rem)]"
+          lineClassNames={[undefined, "md:pl-[10%]"]}
+        />
+
+        <div className="mt-16 grid gap-14 md:mt-24 md:grid-cols-12 md:gap-x-6">
+          <figure className="md:col-span-6 lg:col-span-5">
+            <EditorialImage
+              src="/media/scene-paris.jpg"
+              alt={story.imageAlt}
+              ratio="4 / 5"
+              focus="30% 50%"
+              sizes="(min-width: 1024px) 40vw, (min-width: 768px) 50vw, 100vw"
             />
-          </div>
-          <div className="flex flex-col justify-end gap-6 lg:col-span-4 lg:col-start-9">
-            {story.paragraphs.map((paragraph, index) => (
-              <Reveal key={index} delay={0.1 * index}>
-                <p className="text-[1.05rem] leading-relaxed text-paper/80">{paragraph}</p>
-              </Reveal>
-            ))}
-            <Reveal delay={0.25}>
-              <p className="mt-2 flex items-baseline gap-3">
-                <span className="font-display text-[2rem] text-ochre italic">{story.signature}</span>
-                <span className="text-[0.7rem] font-mono font-bold tracking-[0.12em] text-paper/55 uppercase">
-                  {story.signatureRole}
+            <figcaption className="kk-caps mt-4 text-kk-ink/70">
+              {story.caption}
+            </figcaption>
+          </figure>
+
+          <div className="flex flex-col justify-center md:col-span-6 md:col-start-7 lg:col-span-5 lg:col-start-7">
+            <Reveal>
+              <span
+                aria-hidden="true"
+                className="block h-12 font-display text-[5rem] leading-none text-kk-sand"
+              >
+                “
+              </span>
+              <blockquote className="font-display text-[clamp(1.45rem,2.2vw,2rem)] leading-[1.3]">
+                {story.quote}
+              </blockquote>
+            </Reveal>
+            <Reveal delay={0.1}>
+              <p className="mt-8 font-display text-[1.25rem] text-kk-ink/70 italic">
+                {story.aside}
+              </p>
+            </Reveal>
+            <Reveal delay={0.15}>
+              <p className="kk-lead mt-8 max-w-[44ch] text-kk-ink/72">
+                {story.body}
+              </p>
+            </Reveal>
+
+            <Reveal
+              delay={0.2}
+              className="mt-12 grid grid-cols-2 gap-6 border-t border-kk-ink/15 pt-8"
+            >
+              <p className="flex flex-col gap-3">
+                <span className="kk-caps text-kk-ink/70">
+                  {problem.replace}
+                </span>
+                <span className="font-display text-[clamp(2.4rem,3.6vw,3.4rem)] leading-none text-kk-ink/55 line-through decoration-1">
+                  {formatPrice(locale, NEW_PRICE.jean)}
+                </span>
+              </p>
+              <p className="flex flex-col gap-3">
+                <span className="kk-caps text-kk-ink/70">{problem.repair}</span>
+                <span className="font-display text-[clamp(2.4rem,3.6vw,3.4rem)] leading-none italic">
+                  {formatPrice(locale, repairFrom)}
                 </span>
               </p>
             </Reveal>
           </div>
-        </div>
-
-        <BogolanRule className="mt-20 text-paper/25 lg:mt-28" />
-
-        <div className="mt-16 grid grid-cols-3 gap-[clamp(10px,3vw,48px)] lg:mt-24">
-          {posters.map((poster, index) => (
-            <figure key={poster.key} className={poster.className}>
-              <Parallax offset={poster.offset}>
-                <Frame variant="white" mat={false}>
-                  <ArtReveal delay={index * 0.15}>{poster.art}</ArtReveal>
-                </Frame>
-              </Parallax>
-              <figcaption className="mt-6 hidden text-[0.66rem] font-mono font-bold tracking-[0.12em] text-paper/55 uppercase sm:block">
-                {poster.caption}
-              </figcaption>
-            </figure>
-          ))}
         </div>
       </div>
     </section>
