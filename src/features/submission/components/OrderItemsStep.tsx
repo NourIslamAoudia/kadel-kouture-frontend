@@ -1,5 +1,6 @@
 import type { OrderItem } from "../types";
-import { formatPrice, calculateTotalPrice } from "../../../common/pricing";
+import { calculateTotalPrice } from "../../../common/pricing";
+import { em, useOrderT } from "../i18n";
 
 interface Props {
   items: OrderItem[];
@@ -15,21 +16,21 @@ export default function OrderItemsStep({
   onRemoveItem,
 }: Props) {
   const totalPrice = calculateTotalPrice(items);
+  const t = useOrderT();
 
   return (
     <div>
       <p className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-gold">
         <span className="h-px w-[18px] bg-gold" />
-        Récapitulatif des pièces
+        {t.items.eyebrow}
       </p>
 
       <h2 className="mb-2 font-serif text-3xl font-light leading-tight text-ink">
-        Vos <em className="italic text-gold">commandes</em> ({items.length})
+        {em(t.items.title(items.length))}
       </h2>
 
       <p className="mb-6 text-[13px] leading-relaxed text-ink-3">
-        Vérifiez vos pièces sélectionnées ou ajoutez-en d'autres avant de passer
-        aux mesures.
+        {t.items.subtitle}
       </p>
 
       {/* Liste des pièces */}
@@ -38,7 +39,7 @@ export default function OrderItemsStep({
           const garmentLabel =
             item.garment_type === "autre" && item.garment_type_other
               ? item.garment_type_other
-              : capitalize(item.garment_type);
+              : t.garments[item.garment_type];
 
           const gPrice = item.garment_price;
           const wPrice = item.work_price;
@@ -62,11 +63,11 @@ export default function OrderItemsStep({
 
                     <div className="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-ink-2">
                       <span className="rounded-md bg-gold-pale/60 px-1.5 py-0.5 text-[11px] font-medium text-ink">
-                        Produit : {formatPrice(gPrice)}
+                        {t.items.product} {t.price(gPrice)}
                       </span>
                       <span>+</span>
-                      <span className="rounded-md bg-gold-pale/60 px-1.5 py-0.5 text-[11px] font-medium capitalize text-ink">
-                        {item.work_type} : {formatPrice(wPrice)}
+                      <span className="rounded-md bg-gold-pale/60 px-1.5 py-0.5 text-[11px] font-medium text-ink">
+                        {t.works[item.work_type].label} {t.price(wPrice)}
                       </span>
                     </div>
 
@@ -80,10 +81,10 @@ export default function OrderItemsStep({
 
                 <div className="text-right">
                   <span className="font-serif text-xl font-bold text-gold">
-                    {formatPrice(pieceTotal)}
+                    {t.price(pieceTotal)}
                   </span>
                   <span className="block text-[10px] text-ink-3">
-                    {gPrice}€ + {wPrice}€
+                    {t.price(gPrice)} + {t.price(wPrice)}
                   </span>
                 </div>
               </div>
@@ -95,16 +96,16 @@ export default function OrderItemsStep({
                   onClick={() => onEditItem(index)}
                   className="text-ink-3 transition hover:text-gold"
                 >
-                  Modifier
+                  {t.items.edit}
                 </button>
 
                 {items.length > 1 && (
                   <button
                     type="button"
                     onClick={() => onRemoveItem(index)}
-                    className="text-red-500/80 transition hover:text-red-600"
+                    className="text-ink-3 underline-offset-4 transition hover:text-ink hover:underline"
                   >
-                    Supprimer
+                    {t.items.remove}
                   </button>
                 )}
               </div>
@@ -122,7 +123,7 @@ export default function OrderItemsStep({
         <span className="flex h-5 w-5 items-center justify-center rounded-full bg-gold text-white text-xs font-bold leading-none">
           +
         </span>
-        Ajouter un autre vêtement
+        {t.items.add}
       </button>
 
       {/* Bloc Total */}
@@ -130,23 +131,15 @@ export default function OrderItemsStep({
         <div className="flex items-center justify-between">
           <div>
             <span className="block text-xs uppercase tracking-wider text-ink-3">
-              Total estimé ({items.length}{" "}
-              {items.length > 1 ? "pièces" : "pièce"})
+              {t.items.total(items.length)}
             </span>
-            <span className="text-[11px] text-ink-3/80">
-              Tarif transparent selon la grille d'atelier
-            </span>
+            <span className="text-[11px] text-ink-3/80">{t.items.note}</span>
           </div>
           <span className="font-serif text-2xl font-semibold text-ink">
-            {formatPrice(totalPrice)}
+            {t.price(totalPrice)}
           </span>
         </div>
       </div>
     </div>
   );
-}
-
-function capitalize(s: string): string {
-  if (!s) return "";
-  return s.charAt(0).toUpperCase() + s.slice(1);
 }

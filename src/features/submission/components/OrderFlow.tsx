@@ -26,6 +26,13 @@ import {
   getItemPrice,
   calculateTotalPrice,
 } from "../../../common/pricing";
+import type { Locale } from "@features/landing/i18n/locales";
+import {
+  em,
+  getOrderDictionary,
+  OrderI18nProvider,
+  rememberLocale,
+} from "../i18n";
 
 type StepKey =
   | "garment"
@@ -48,15 +55,20 @@ const STEP_ORDER: StepKey[] = [
 ];
 
 interface OrderFlowProps {
+  /** Langue au chargement (paramètre ?lang, cookie, puis navigateur). */
+  initialLocale?: Locale;
   /** Présélection depuis le catalogue de la landing page (section 5.5). */
   initialGarment?: GarmentType | null;
   initialWork?: WorkType | null;
 }
 
 export default function OrderFlow({
+  initialLocale = "es",
   initialGarment = null,
   initialWork = null,
 }: OrderFlowProps = {}) {
+  const [locale, setLocale] = useState<Locale>(initialLocale);
+  const t = getOrderDictionary(locale);
   const [step, setStep] = useState<StepKey>("garment");
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -66,7 +78,9 @@ export default function OrderFlow({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
 
   // Étape vêtement en cours
-  const [garmentType, setGarmentType] = useState<GarmentType | null>(initialGarment);
+  const [garmentType, setGarmentType] = useState<GarmentType | null>(
+    initialGarment,
+  );
   const [garmentOther, setGarmentOther] = useState("");
 
   // Étape travail en cours
@@ -107,22 +121,22 @@ export default function OrderFlow({
 
   const validationMessage = (): string | null => {
     if (step === "garment" && !garmentType) {
-      return "Choisissez un type de vêtement.";
+      return t.errors.garment;
     }
     if (step === "garment" && garmentType === "autre" && !garmentOther.trim()) {
-      return "Précisez le type de vêtement.";
+      return t.errors.garmentOther;
     }
     if (step === "work" && !workType) {
-      return "Choisissez le type de travail.";
+      return t.errors.work;
     }
     if (step === "items" && items.length === 0) {
-      return "Veuillez ajouter au moins une pièce à votre commande.";
+      return t.errors.items;
     }
     if (step === "method" && !method) {
-      return "Choisissez une méthode de mesure.";
+      return t.errors.method;
     }
     if (step === "measurements" && method === "photo" && !photoResult) {
-      return "Ajoutez les deux photos et lancez l’analyse.";
+      return t.errors.photo;
     }
     if (step === "measurements" && method === "manual") {
       const limits = {
@@ -147,20 +161,20 @@ export default function OrderFlow({
         },
       );
       if (invalid) {
-        return "Vérifiez vos mesures : les valeurs doivent être réalistes et en cm.";
+        return t.errors.measures;
       }
     }
     if (step === "client") {
-      if (!client.fullName.trim()) return "Saisissez votre nom complet.";
+      if (!client.fullName.trim()) return t.errors.fullName;
       if (!/^[+\d][\d\s().-]{7,}$/.test(client.phone.trim())) {
-        return "Saisissez un numéro de téléphone valide.";
+        return t.errors.phone;
       }
       if (!/^\S+@\S+\.\S+$/.test(client.email.trim())) {
-        return "Saisissez une adresse email valide.";
+        return t.errors.email;
       }
     }
     if (step === "zone" && (!zone || !dropOffPoint)) {
-      return "Choisissez une zone et un point de dépôt.";
+      return t.errors.zone;
     }
     return null;
   };
@@ -292,28 +306,35 @@ export default function OrderFlow({
       });
       setStep("done");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Une erreur est survenue");
+      setError(err instanceof Error ? err.message : t.errors.generic);
     } finally {
       setSubmitting(false);
     }
   };
 
+  const changeLocale = (next: Locale) => {
+    setLocale(next);
+    rememberLocale(next);
+    const url = new URL(window.location.href);
+    url.searchParams.set("lang", next);
+    window.history.replaceState(null, "", url);
+  };
+
   if (step === "done") {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-bg p-6">
+      <div
+        lang={locale}
+        className="flex min-h-screen items-center justify-center bg-bg p-6"
+      >
         <div className="w-full max-w-sm text-center">
           <div className="mx-auto mb-4 flex h-[70px] w-[70px] items-center justify-center rounded-full bg-gold-pale">
             <CheckIcon />
           </div>
           <h2 className="mb-2 font-serif text-3xl font-light text-ink">
-            Demande <em className="italic text-gold">confirmée !</em>
+            {em(t.done.title)}
           </h2>
           <p className="text-[13px] leading-relaxed text-ink-3">
-            Votre commande de {items.length}{" "}
-            {items.length > 1 ? "pièces" : "pièce"} pour un total estimé de{" "}
-            <strong className="text-ink">{totalPrice} €</strong> a bien été
-            enregistrée. Nous vous recontacterons rapidement pour finaliser les
-            détails.
+            {t.done.text(t.nav.pieces(items.length), t.price(totalPrice))}
           </p>
         </div>
       </div>
@@ -321,122 +342,133 @@ export default function OrderFlow({
   }
 
   const getNextLabel = (): string => {
-    if (step === "zone") return "Envoyer la demande →";
+    if (step === "zone") return `${t.nav.send} →`;
     if (step === "work") {
-      return editingIndex !== null
-        ? "Enregistrer la pièce →"
-        : "Ajouter la pièce →";
+      return `${editingIndex !== null ? t.nav.savePiece : t.nav.addPiece} →`;
     }
-    if (step === "items") return "Passer aux mesures →";
-    return "Continuer →";
+    if (step === "items") return `${t.nav.toMeasures} →`;
+    return `${t.nav.next} →`;
   };
 
   return (
-    <div className="mx-auto flex min-h-screen max-w-[480px] flex-col bg-bg shadow-[0_0_60px_rgba(0,0,0,0.06)]">
-      <Topbar
-        step={currentIndex + 1}
-        totalSteps={totalSteps}
-        onBack={goBack}
-        canGoBack={currentIndex > 0 || (step === "garment" && items.length > 0)}
-      />
+    <OrderI18nProvider locale={locale}>
+      <div
+        lang={locale}
+        className="mx-auto flex min-h-screen max-w-[560px] flex-col bg-bg"
+      >
+        <Topbar
+          locale={locale}
+          onLocaleChange={changeLocale}
+          step={currentIndex + 1}
+          totalSteps={totalSteps}
+          onBack={goBack}
+          canGoBack={
+            currentIndex > 0 || (step === "garment" && items.length > 0)
+          }
+        />
 
-      <div className="flex-1 overflow-y-auto px-[22px] py-6">
-        {step === "garment" && (
-          <GarmentTypeStep
-            value={garmentType}
-            otherValue={garmentOther}
-            itemIndex={editingIndex !== null ? editingIndex : items.length}
-            onChange={setGarmentType}
-            onOtherChange={setGarmentOther}
-          />
-        )}
-
-        {step === "work" && (
-          <WorkTypeStep
-            value={workType}
-            garmentType={garmentType}
-            itemIndex={editingIndex !== null ? editingIndex : items.length}
-            itemComment={itemComment}
-            onChange={setWorkType}
-            onItemCommentChange={setItemComment}
-          />
-        )}
-
-        {step === "items" && (
-          <OrderItemsStep
-            items={items}
-            onAddItem={handleAddNewItem}
-            onEditItem={handleEditItem}
-            onRemoveItem={handleRemoveItem}
-          />
-        )}
-
-        {step === "method" && (
-          <MeasureMethodStep value={method} onChange={setMethod} />
-        )}
-
-        {step === "measurements" &&
-          (method === "photo" ? (
-            <PhotoMeasurementStep
-              result={photoResult}
-              onResult={setPhotoResult}
+        <div className="flex-1 overflow-y-auto px-[22px] py-6">
+          {step === "garment" && (
+            <GarmentTypeStep
+              value={garmentType}
+              otherValue={garmentOther}
+              itemIndex={editingIndex !== null ? editingIndex : items.length}
+              onChange={setGarmentType}
+              onOtherChange={setGarmentOther}
             />
-          ) : (
-            <ManualMeasurementsStep
-              values={manual}
+          )}
+
+          {step === "work" && (
+            <WorkTypeStep
+              value={workType}
+              garmentType={garmentType}
+              itemIndex={editingIndex !== null ? editingIndex : items.length}
+              itemComment={itemComment}
+              onChange={setWorkType}
+              onItemCommentChange={setItemComment}
+            />
+          )}
+
+          {step === "items" && (
+            <OrderItemsStep
+              items={items}
+              onAddItem={handleAddNewItem}
+              onEditItem={handleEditItem}
+              onRemoveItem={handleRemoveItem}
+            />
+          )}
+
+          {step === "method" && (
+            <MeasureMethodStep value={method} onChange={setMethod} />
+          )}
+
+          {step === "measurements" &&
+            (method === "photo" ? (
+              <PhotoMeasurementStep
+                result={photoResult}
+                onResult={setPhotoResult}
+              />
+            ) : (
+              <ManualMeasurementsStep
+                values={manual}
+                onChange={(field, value) =>
+                  setManual((m) => ({ ...m, [field]: value }))
+                }
+              />
+            ))}
+
+          {step === "client" && (
+            <ClientInfoStep
+              values={client}
               onChange={(field, value) =>
-                setManual((m) => ({ ...m, [field]: value }))
+                setClient((c) => ({ ...c, [field]: value }))
               }
             />
-          ))}
+          )}
 
-        {step === "client" && (
-          <ClientInfoStep
-            values={client}
-            onChange={(field, value) =>
-              setClient((c) => ({ ...c, [field]: value }))
+          {step === "zone" && (
+            <ZoneDropoffStep
+              zone={zone}
+              dropOffPoint={dropOffPoint}
+              onZoneChange={(z) => {
+                setZone(z);
+                setDropOffPoint(null);
+              }}
+              onDropOffChange={setDropOffPoint}
+            />
+          )}
+
+          {(error || validationMessage()) && (
+            <p
+              className="mt-4 font-serif text-[15px] text-ink-2 italic"
+              role="alert"
+            >
+              {error ?? validationMessage()}
+            </p>
+          )}
+        </div>
+
+        {!(step === "measurements" && method === "photo" && !photoResult) && (
+          <BottomNav
+            onNext={goNext}
+            nextDisabled={!canGoNext()}
+            loading={submitting}
+            nextLabel={getNextLabel()}
+            totalPrice={
+              step === "work" && garmentType && workType
+                ? calculateTotalPrice(items) +
+                  getItemPrice(garmentType, workType)
+                : totalPrice
+            }
+            itemsCount={
+              step === "work" && editingIndex === null
+                ? items.length + 1
+                : items.length
             }
           />
         )}
-
-        {step === "zone" && (
-          <ZoneDropoffStep
-            zone={zone}
-            dropOffPoint={dropOffPoint}
-            onZoneChange={(z) => {
-              setZone(z);
-              setDropOffPoint(null);
-            }}
-            onDropOffChange={setDropOffPoint}
-          />
-        )}
-
-        {(error || validationMessage()) && (
-          <p className="mt-4 text-sm text-red-600" role="alert">
-            {error ?? validationMessage()}
-          </p>
-        )}
       </div>
-
-      {!(step === "measurements" && method === "photo" && !photoResult) && (
-        <BottomNav
-          onNext={goNext}
-          nextDisabled={!canGoNext()}
-          loading={submitting}
-          nextLabel={getNextLabel()}
-          totalPrice={
-            step === "work" && garmentType && workType
-              ? calculateTotalPrice(items) + getItemPrice(garmentType, workType)
-              : totalPrice
-          }
-          itemsCount={
-            step === "work" && editingIndex === null
-              ? items.length + 1
-              : items.length
-          }
-        />
-      )}
-    </div>
+    </OrderI18nProvider>
   );
 }
 

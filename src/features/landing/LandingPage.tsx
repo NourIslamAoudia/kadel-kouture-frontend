@@ -15,6 +15,7 @@ import { Trust } from "./components/Trust";
 import type { LandingDictionary } from "./i18n/fr";
 import type { Locale } from "./i18n/locales";
 import { RevealObserver } from "./motion/RevealObserver";
+import { RememberLocale } from "./components/RememberLocale";
 import type { FounderOffer } from "./types";
 
 interface LandingPageProps {
@@ -54,6 +55,7 @@ export function LandingPage({ locale, t, offer }: LandingPageProps) {
       <Footer t={t} locale={locale} />
       <StickyCta cta={t.sticky.cta} note={t.sticky.note} />
       <RevealObserver />
+      <RememberLocale locale={locale} />
     </div>
   );
 }

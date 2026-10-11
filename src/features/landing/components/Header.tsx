@@ -79,8 +79,8 @@ export function Header({
             <Wordmark />
           </Link>
 
-          <nav aria-label={nav.label} className="hidden xl:block">
-            <ul className="flex items-center gap-9 text-[0.68rem] font-semibold tracking-[0.18em] uppercase">
+          <nav aria-label={nav.label} className="hidden min-[1360px]:block">
+            <ul className="flex items-center gap-8 text-[0.68rem] whitespace-nowrap font-semibold tracking-[0.18em] uppercase">
               {links.map((link) => (
                 <li key={link.href}>
                   <a href={link.href} className="kk-navlink">
@@ -110,7 +110,7 @@ export function Header({
               onClick={() => setOpen(true)}
               aria-expanded={open}
               aria-controls="kk-menu"
-              className="kk-caps flex items-center gap-3 xl:hidden"
+              className="kk-caps flex items-center gap-3 min-[1360px]:hidden"
             >
               <span>{nav.menu}</span>
               <span aria-hidden="true" className="flex w-6 flex-col gap-1.5">
@@ -129,7 +129,7 @@ export function Header({
         aria-label={nav.menu}
         data-open={open}
         inert={!open}
-        className="kk-menu fixed inset-0 z-80 flex flex-col bg-kk-ivory text-kk-ink xl:hidden"
+        className="kk-menu fixed inset-0 z-80 flex flex-col bg-kk-ivory text-kk-ink min-[1360px]:hidden"
       >
         <div
           className="kk-container flex items-center justify-between"

@@ -33,15 +33,6 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* Pas de curseur de saisie sur les textes (navigation au curseur, F7) ; il reste dans les champs. */
-  .kk-site {
-    caret-color: transparent;
-  }
-
-  .kk-site :is(input, textarea, select, [contenteditable="true"]) {
-    caret-color: auto;
-  }
-
   .kk-site ::selection {
     background: var(--kk-ink);
     color: var(--kk-ivory);

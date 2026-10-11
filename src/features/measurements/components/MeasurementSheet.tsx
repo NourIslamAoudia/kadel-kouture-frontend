@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import type { ExtractionResponse, MeasurementItem } from "../types";
+import { useOrderT } from "@features/submission/i18n";
 
 export const SUMMARY_FIELDS = [
   { key: "chest", label: "Poitrine", names: ["chest circumf"] },
@@ -47,12 +48,13 @@ function MeasurementCard({
   item?: MeasurementItem;
   unit: "cm" | "in";
 }) {
+  const t = useOrderT();
   const value = item ? (unit === "cm" ? item.value_cm : item.value_in) : null;
   return (
     <article className="summary-measurement-card">
       <span>{label}</span>
       <strong>{value === null ? "—" : Math.round(value)}</strong>
-      <small>{value === null ? "Non disponible" : unit}</small>
+      <small>{value === null ? t.sheet.unavailable : unit}</small>
     </article>
   );
 }
@@ -64,14 +66,15 @@ export default function MeasurementSheet({
 }) {
   const [unit, setUnit] = useState<"cm" | "in">("cm");
   const [copied, setCopied] = useState(false);
+  const t = useOrderT();
   const summary = useMemo(
     () =>
-      SUMMARY_FIELDS.map(({ key, label, names }) => ({
+      SUMMARY_FIELDS.map(({ key, names }) => ({
         key,
-        label,
+        label: t.measures.fields[key],
         item: findMeasurement(result.measurements, names),
       })),
-    [result.measurements],
+    [result.measurements, t],
   );
 
   const copySummary = async () => {
@@ -92,8 +95,8 @@ export default function MeasurementSheet({
     <section className="measurement-sheet">
       <div className="measurement-header">
         <div>
-          <span className="step-label">Fiche atelier</span>
-          <h2>Mesures essentielles</h2>
+          <span className="step-label">{t.sheet.label}</span>
+          <h2>{t.sheet.title}</h2>
         </div>
         <div className="measurement-tools">
           <div className="unit-switch">
@@ -113,7 +116,7 @@ export default function MeasurementSheet({
             type="button"
             onClick={() => void copySummary()}
           >
-            {copied ? "Copié" : "Copier"}
+            {copied ? t.sheet.copied : t.sheet.copy}
           </button>
         </div>
       </div>
@@ -123,8 +126,7 @@ export default function MeasurementSheet({
         ))}
       </div>
       <p className="measurement-footnote">
-        Résultats filtrés du modèle 3D · Référence{" "}
-        {result.request_id.slice(0, 8)}
+        {t.sheet.footnote(result.request_id.slice(0, 8))}
       </p>
     </section>
   );

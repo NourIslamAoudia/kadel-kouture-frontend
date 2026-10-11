@@ -1,105 +1,61 @@
-export type MeasureMethod = 'manual' | 'photo'
+import { MethodIcon } from "./StepIcons";
+import { em, useOrderT } from "../i18n";
 
-interface MethodOption {
-  value: MeasureMethod
-  label: string
-  description: string
-}
+export type MeasureMethod = "manual" | "photo";
 
-const OPTIONS: MethodOption[] = [
-  {
-    value: 'manual',
-    label: 'Manuel',
-    description: 'Introduire mes mesures',
-  },
-  {
-    value: 'photo',
-    label: 'Photo 3D',
-    description: 'Détection automatique',
-  },
-]
+const OPTIONS: MeasureMethod[] = ["manual", "photo"];
 
 interface Props {
-  value: MeasureMethod | null
-  onChange: (value: MeasureMethod) => void
+  value: MeasureMethod | null;
+  onChange: (value: MeasureMethod) => void;
 }
 
 export default function MeasureMethodStep({ value, onChange }: Props) {
+  const t = useOrderT();
   return (
     <div>
       <p className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-gold">
         <span className="h-px w-[18px] bg-gold" />
-        Mesures
+        {t.method.eyebrow}
       </p>
 
       <h2 className="mb-2 font-serif text-3xl font-light leading-tight text-ink">
-        Comment souhaitez-vous <em className="italic text-gold">être mesuré</em> ?
+        {em(t.method.title)}
       </h2>
 
       <p className="mb-6 text-[13px] leading-relaxed text-ink-3">
-        Choisissez la méthode la plus pratique pour vous.
+        {t.method.subtitle}
       </p>
 
       <div className="grid grid-cols-2 gap-3">
         {OPTIONS.map((option) => {
-          const selected = value === option.value
+          const selected = value === option;
           return (
             <button
-              key={option.value}
+              key={option}
               type="button"
-              onClick={() => onChange(option.value)}
-              className={`flex flex-col items-center rounded-lg border-[1.5px] px-4 py-6 text-center transition ${
+              onClick={() => onChange(option)}
+              aria-pressed={selected}
+              className={`group flex flex-col items-center border px-4 pt-7 pb-6 text-center transition duration-300 ${
                 selected
-                  ? 'border-gold bg-gold-pale'
-                  : 'border-gold/16 bg-white hover:border-gold'
+                  ? "border-ink bg-gold-pale"
+                  : "border-ink/12 bg-white hover:border-ink/45"
               }`}
             >
-              <MethodIcon type={option.value} className="mb-2.5 text-gold" />
-              <span className="text-[13px] font-medium text-ink">
-                {option.label}
+              <MethodIcon
+                type={option}
+                className="mb-4 h-14 w-14 text-ink transition-transform duration-500 ease-[cubic-bezier(.22,1,.36,1)] group-hover:-translate-y-0.5"
+              />
+              <span className="font-serif text-[18px] leading-none text-ink">
+                {t.method[option].label}
               </span>
-              <span className="mt-0.5 text-[11px] text-ink-3">
-                {option.description}
+              <span className="mt-2 text-[12px] text-ink-3">
+                {t.method[option].description}
               </span>
             </button>
-          )
+          );
         })}
       </div>
     </div>
-  )
-}
-
-function MethodIcon({
-  type,
-  className,
-}: {
-  type: MeasureMethod
-  className?: string
-}) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      width="26"
-      height="26"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.8"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      {type === 'manual' ? (
-        <>
-          <path d="M3 8.5L8.5 3l13 13L16 21.5 3 8.5z" />
-          <path d="M8 8l2 2M10.5 5.5l2 2M5.5 10.5l2 2" />
-        </>
-      ) : (
-        <>
-          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-          <circle cx="12" cy="13" r="4" />
-        </>
-      )}
-    </svg>
-  )
+  );
 }

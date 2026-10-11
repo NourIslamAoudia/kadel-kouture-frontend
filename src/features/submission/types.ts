@@ -1,5 +1,5 @@
 export type GarmentType =
-  "pantalon" | "veste" | "robe" | "chemise" | "manteau" | "autre" ;
+  "pantalon" | "veste" | "robe" | "chemise" | "manteau" | "autre";
 export type WorkType =
   "retouche" | "reparation" | "personnalisation" | "upcycling";
 export type SilhouetteModel = "neutral" | "male" | "female";

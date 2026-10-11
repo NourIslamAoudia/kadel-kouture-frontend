@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { Wordmark } from "@features/landing/art/Brand";
 import { useAuth } from "@features/auth/context/AuthContext";
 
 function isAdmin(user: { role: string; is_admin?: boolean }) {
@@ -53,7 +54,7 @@ export default function AdminLoginPage() {
   return (
     <main className="admin-auth-page">
       <div className="admin-auth-panel">
-        <img src="/logo.png" alt="Kadel Kouture" className="admin-logo" />
+        <Wordmark className="admin-logo" />
         <span className="admin-eyebrow">Espace sécurisé</span>
         <h1>
           Connexion <em>administrateur</em>

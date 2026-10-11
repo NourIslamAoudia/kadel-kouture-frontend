@@ -1,5 +1,6 @@
 import { useCallback, useRef, useState } from "react";
 import type { Gender } from "../types";
+import { useOrderT } from "@features/submission/i18n";
 export type ShotId = "front" | "side";
 
 export interface Shot {
@@ -86,6 +87,7 @@ function PhotoCard({
 }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
+  const t = useOrderT();
   const selectFile = (file?: File) => {
     if (file?.type.startsWith("image/")) onSelect(file);
   };
@@ -120,21 +122,22 @@ function PhotoCard({
           <h2>{title}</h2>
           <p>{description}</p>
         </div>
-        {shot && <span className="ready-mark">Prêt</span>}
+        {shot && <span className="ready-mark">{t.upload.ready}</span>}
       </div>
       {shot ? (
         <>
           <div className="photo-preview">
-            <img src={shot.previewUrl} alt={`Aperçu ${title}`} />
+            <img src={shot.previewUrl} alt={t.upload.preview(title)} />
           </div>
           <div className="photo-card-actions">
             <button type="button" onClick={() => inputRef.current?.click()}>
-              <UploadIcon /> Remplacer
+              <UploadIcon /> {t.upload.replace}
             </button>
             <button
               type="button"
               className="remove-photo"
-              title={`Supprimer ${title}`}
+              title={t.upload.removePhoto(title)}
+              aria-label={t.upload.removePhoto(title)}
               onClick={onRemove}
             >
               <RemoveIcon />
@@ -148,8 +151,8 @@ function PhotoCard({
           onClick={() => inputRef.current?.click()}
         >
           <ImageIcon />
-          <strong>Déposer ou choisir une image</strong>
-          <span>JPG, PNG ou WebP</span>
+          <strong>{t.upload.drop}</strong>
+          <span>{t.upload.formats}</span>
         </button>
       )}
     </div>
@@ -182,20 +185,18 @@ export default function PhotoUpload({
     });
   };
   const ready = Boolean(shots.front && shots.side);
+  const t = useOrderT();
   const example =
     gender === "female"
-      ? { src: "/demo-2.jpg", label: "Exemple modèle femme" }
-      : { src: "/demo-1.png", label: "Exemple modèle homme" };
+      ? { src: "/demo-2.jpg", label: t.upload.exampleFemale }
+      : { src: "/demo-1.png", label: t.upload.exampleMale };
   return (
     <div className="photo-upload">
       <div className="upload-intro">
         <div>
-          <span className="step-label">Photos requises</span>
-          <h2>Deux vues de votre silhouette</h2>
-          <p>
-            Ajoutez une photo de face et une photo de profil. Elles seront
-            envoyées ensemble au moteur de mesure.
-          </p>
+          <span className="step-label">{t.upload.label}</span>
+          <h2>{t.upload.title}</h2>
+          <p>{t.upload.text}</p>
         </div>
         <span className="upload-count">
           {ready ? "2 / 2" : `${shots.front ? 1 : 0} / 2`}
@@ -203,8 +204,8 @@ export default function PhotoUpload({
       </div>
       <div className="photo-examples">
         <div className="photo-examples-heading">
-          <strong>Exemples de photos attendues</strong>
-          <span>Votre pose doit ressembler à cet exemple</span>
+          <strong>{t.upload.examplesTitle}</strong>
+          <span>{t.upload.examplesText}</span>
         </div>
         <div className="photo-examples-grid">
           <figure>
@@ -216,25 +217,22 @@ export default function PhotoUpload({
       <div className="upload-guidance">
         <ImageIcon />
         <span>
-          <strong>Important pour un meilleur résultat</strong> · prenez une
-          photo de face et une photo de profil, avec le corps entier visible.
-          Portez des vêtements ajustés, près du corps, et non des vêtements
-          larges.
+          <strong>{t.upload.guidanceStrong}</strong> · {t.upload.guidance}
         </span>
       </div>
       <div className="photo-upload-grid">
         <PhotoCard
           id="front"
-          title="Vue de face"
-          description="Pieds joints, bras légèrement écartés"
+          title={t.upload.front.title}
+          description={t.upload.front.description}
           shot={shots.front}
           onSelect={(file) => save("front", file)}
           onRemove={() => remove("front")}
         />
         <PhotoCard
           id="side"
-          title="Vue de profil"
-          description="Tournez-vous à 90°, posture naturelle"
+          title={t.upload.side.title}
+          description={t.upload.side.description}
           shot={shots.side}
           onSelect={(file) => save("side", file)}
           onRemove={() => remove("side")}
@@ -242,7 +240,7 @@ export default function PhotoUpload({
       </div>
       <div className="upload-footer">
         <button className="back-button" type="button" onClick={onCancel}>
-          Retour
+          {t.upload.back}
         </button>
         <button
           className="primary-button"
@@ -252,7 +250,7 @@ export default function PhotoUpload({
             ready && onComplete({ front: shots.front!, side: shots.side! })
           }
         >
-          {ready ? "Lancer le scan" : "Ajoutez les deux photos"}
+          {ready ? t.upload.start : t.upload.missing}
           <UploadIcon />
         </button>
       </div>

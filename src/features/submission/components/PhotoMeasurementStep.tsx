@@ -6,6 +6,7 @@ import PhotoUpload, {
 import MeasurementSheet from "@features/measurements/components/MeasurementSheet";
 import { extractMeasurements } from "@features/measurements/api";
 import type { ExtractionResponse, Gender } from "@features/measurements/types";
+import { em, useOrderT } from "../i18n";
 
 interface Props {
   result: ExtractionResponse | null;
@@ -17,11 +18,12 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
   const [gender, setGender] = useState<Gender>("neutral");
   const [processing, setProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const t = useOrderT();
 
   const runExtraction = async (shots: Record<ShotId, Shot>) => {
     const height = Number(heightCm);
     if (!Number.isFinite(height) || height < 100 || height > 230) {
-      setError("La taille doit être comprise entre 100 et 230 cm.");
+      setError(t.photo.heightError);
       return;
     }
     setProcessing(true);
@@ -36,11 +38,7 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
       });
       onResult(response);
     } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "Erreur lors du calcul des mesures",
-      );
+      setError(err instanceof Error ? err.message : t.photo.computeError);
     } finally {
       setProcessing(false);
     }
@@ -57,10 +55,10 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
   if (processing) {
     return (
       <div className="flex min-h-[260px] flex-col items-center justify-center text-center">
-        <p className="font-serif text-2xl text-ink">Analyse en cours…</p>
-        <p className="mt-2 text-sm text-ink-3">
-          Le moteur calcule vos mesures.
+        <p className="font-serif text-2xl text-ink">
+          {t.photo.processingTitle}
         </p>
+        <p className="mt-2 text-sm text-ink-3">{t.photo.processingText}</p>
       </div>
     );
   }
@@ -70,20 +68,19 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
       <div>
         <p className="mb-2 flex items-center gap-2 text-[10px] uppercase tracking-[0.22em] text-gold">
           <span className="h-px w-[18px] bg-gold" />
-          Photo 3D
+          {t.photo.eyebrow}
         </p>
         <h2 className="font-serif text-3xl font-light leading-tight text-ink">
-          Vos mesures, <em className="italic text-gold">automatiquement</em>
+          {em(t.photo.title)}
         </h2>
         <p className="mt-2 text-[13px] leading-relaxed text-ink-3">
-          Ajoutez une photo de face et une photo de profil. Le moteur retournera
-          vos mesures.
+          {t.photo.subtitle}
         </p>
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <label className="text-xs text-ink-3">
-          Taille (cm)
+          {t.photo.height}
           <input
             type="number"
             min="100"
@@ -95,15 +92,15 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
           />
         </label>
         <label className="text-xs text-ink-3">
-          Modèle
+          {t.photo.model}
           <select
             value={gender}
             onChange={(event) => setGender(event.target.value as Gender)}
             className="mt-1 w-full rounded-lg border border-gold/20 bg-white px-3 py-2 text-sm text-ink outline-none focus:border-gold"
           >
-            <option value="neutral">Neutre</option>
-            <option value="female">Femme</option>
-            <option value="male">Homme</option>
+            <option value="neutral">{t.photo.models.neutral}</option>
+            <option value="female">{t.photo.models.female}</option>
+            <option value="male">{t.photo.models.male}</option>
           </select>
         </label>
       </div>
@@ -114,7 +111,11 @@ export default function PhotoMeasurementStep({ result, onResult }: Props) {
         onCancel={() => undefined}
       />
 
-      {error && <p className="text-sm text-red-600">{error}</p>}
+      {error && (
+        <p className="font-serif text-[15px] text-ink-2 italic" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 }

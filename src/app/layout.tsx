@@ -1,24 +1,23 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, DM_Sans } from "next/font/google";
+import { DM_Serif_Display, Plus_Jakarta_Sans } from "next/font/google";
 import { AppProviders } from "./providers";
 import "../index.css";
 
-const cormorant = Cormorant_Garamond({
+// Une seule typographie pour tout le site (landing, commande, admin).
+// Titres : serif éditorial à fort contraste, avec une italique de couture.
+const display = DM_Serif_Display({
   subsets: ["latin"],
-  weight: ["300", "400"],
+  weight: "400",
   style: ["normal", "italic"],
-  variable: "--font-cormorant",
+  variable: "--font-landing-display",
   display: "swap",
-  // Pas de préchargement : la landing (route la plus visitée) n'utilise pas ces polices.
-  preload: false,
 });
 
-const dmSans = DM_Sans({
+// Texte et interface : sans-serif net, lisible aux petites tailles.
+const body = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  weight: ["300", "400", "500"],
-  variable: "--font-dm-sans",
+  variable: "--font-landing-body",
   display: "swap",
-  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -44,7 +43,7 @@ export default function RootLayout({
     // suppressHydrationWarning : le script ci-dessous ajoute une classe à <html> avant l'hydratation.
     <html
       lang="fr"
-      className={`${cormorant.variable} ${dmSans.variable}`}
+      className={`${display.variable} ${body.variable}`}
       suppressHydrationWarning
     >
       <head>
