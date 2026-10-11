@@ -160,11 +160,39 @@ export const en: OrderDictionary = {
 
   zone: {
     eyebrow: "Logistics",
-    title: "Your area *in Barcelona*",
+    title: "Your *drop-off point*",
     subtitle:
-      "Choose your neighbourhood and the most convenient drop-off point.",
-    pickZone: "Choose your area",
+      "Drop your garment off near you: search by address or postcode, or use your location.",
+    searchLabel: "Address or postcode",
+    searchPlaceholder: "E.g. 75004, Paris",
+    search: "Search",
+    useLocation: "Use my location",
+    locating: "Locating…",
+    tooShort: "Enter at least 3 characters.",
     dropOff: "Drop-off points",
+    selected: "Selected point",
+    yourPosition: "You",
+    yourAddress: "Your address",
+    mapHint:
+      "Search for an address or use your location to see the drop-off points around you.",
+    loading: "Finding drop-off points…",
+    error: "We couldn't load the drop-off points.",
+    retry: "Try again",
+    notFound: "Address not found. Check it or use your location.",
+    empty:
+      "No drop-off points found near this address. The service is available in France.",
+    geoDenied: "Allow location access in your browser or enter an address.",
+    geoUnavailable: "Your location isn't available right now. Enter an address.",
+    geoTimeout: "Locating took too long. Try again or enter an address.",
+    geoUnsupported: "Location isn't available on this device. Enter an address.",
+    locker: "Locker",
+    openToday: (hours: string) => `Today · ${hours}`,
+    closedToday: "Closed today",
+    /** 340 m, 1,2 km… */
+    distance: (meters: number) =>
+      meters < 1000
+        ? `${Math.round(meters / 10) * 10}\u00A0m`
+        : `${new Intl.NumberFormat("en-GB", { maximumFractionDigits: 1 }).format(meters / 1000)}\u00A0km`,
   },
 
   errors: {
@@ -178,7 +206,7 @@ export const en: OrderDictionary = {
     fullName: "Enter your full name.",
     phone: "Enter a valid phone number.",
     email: "Enter a valid email address.",
-    zone: "Choose an area and a drop-off point.",
+    zone: "Choose a drop-off point.",
     generic: "Something went wrong. Please try again in a moment.",
   },
 

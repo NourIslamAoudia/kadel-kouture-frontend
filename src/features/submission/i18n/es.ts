@@ -166,10 +166,39 @@ export const es: OrderDictionary = {
 
   zone: {
     eyebrow: "Logística",
-    title: "Tu zona *en Barcelona*",
-    subtitle: "Elige tu barrio y el punto de entrega más práctico.",
-    pickZone: "Elige tu zona",
+    title: "Tu *punto de entrega*",
+    subtitle:
+      "Deja tu prenda cerca de casa: busca por dirección o código postal, o usa tu ubicación.",
+    searchLabel: "Dirección o código postal",
+    searchPlaceholder: "Ej.: 75004, París",
+    search: "Buscar",
+    useLocation: "Usar mi ubicación",
+    locating: "Localizando…",
+    tooShort: "Escribe al menos 3 caracteres.",
     dropOff: "Puntos de entrega",
+    selected: "Punto elegido",
+    yourPosition: "Tú",
+    yourAddress: "Tu dirección",
+    mapHint:
+      "Busca una dirección o usa tu ubicación para ver los puntos de entrega cercanos.",
+    loading: "Buscando puntos de entrega…",
+    error: "No se han podido cargar los puntos de entrega.",
+    retry: "Reintentar",
+    notFound: "Dirección no encontrada. Revísala o usa tu ubicación.",
+    empty:
+      "No hay puntos de entrega cerca de esta dirección. El servicio está disponible en Francia.",
+    geoDenied: "Permite la ubicación en tu navegador o escribe una dirección.",
+    geoUnavailable: "Tu ubicación no está disponible ahora. Escribe una dirección.",
+    geoTimeout: "La ubicación ha tardado demasiado. Inténtalo de nuevo o escribe una dirección.",
+    geoUnsupported: "La ubicación no está disponible en este dispositivo. Escribe una dirección.",
+    locker: "Taquilla",
+    openToday: (hours: string) => `Hoy · ${hours}`,
+    closedToday: "Cerrado hoy",
+    /** 340 m, 1,2 km… */
+    distance: (meters: number) =>
+      meters < 1000
+        ? `${Math.round(meters / 10) * 10}\u00A0m`
+        : `${new Intl.NumberFormat("es-ES", { maximumFractionDigits: 1 }).format(meters / 1000)}\u00A0km`,
   },
 
   errors: {
@@ -183,7 +212,7 @@ export const es: OrderDictionary = {
     fullName: "Escribe tu nombre completo.",
     phone: "Escribe un número de teléfono válido.",
     email: "Escribe una dirección de email válida.",
-    zone: "Elige una zona y un punto de entrega.",
+    zone: "Elige un punto de entrega.",
     generic: "Se ha producido un error. Inténtalo de nuevo en un momento.",
   },
 

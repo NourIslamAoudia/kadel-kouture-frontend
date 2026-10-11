@@ -171,10 +171,39 @@ export const ca: OrderDictionary = {
 
   zone: {
     eyebrow: "Logística",
-    title: "La teva zona *a Barcelona*",
-    subtitle: "Tria el teu barri i el punt de lliurament més pràctic.",
-    pickZone: "Tria la teva zona",
+    title: "El teu *punt de lliurament*",
+    subtitle:
+      "Deixa la peça a prop de casa: cerca per adreça o codi postal, o fes servir la teva ubicació.",
+    searchLabel: "Adreça o codi postal",
+    searchPlaceholder: "Ex.: 75004, París",
+    search: "Cercar",
+    useLocation: "Fer servir la meva ubicació",
+    locating: "Localitzant…",
+    tooShort: "Escriu almenys 3 caràcters.",
     dropOff: "Punts de lliurament",
+    selected: "Punt triat",
+    yourPosition: "Tu",
+    yourAddress: "La teva adreça",
+    mapHint:
+      "Cerca una adreça o fes servir la teva ubicació per veure els punts de lliurament propers.",
+    loading: "Cercant punts de lliurament…",
+    error: "No s'han pogut carregar els punts de lliurament.",
+    retry: "Torna-ho a provar",
+    notFound: "No s'ha trobat l'adreça. Revisa-la o fes servir la teva ubicació.",
+    empty:
+      "No hi ha punts de lliurament a prop d'aquesta adreça. El servei està disponible a França.",
+    geoDenied: "Permet la ubicació al navegador o escriu una adreça.",
+    geoUnavailable: "La teva ubicació no està disponible ara. Escriu una adreça.",
+    geoTimeout: "La ubicació ha trigat massa. Torna-ho a provar o escriu una adreça.",
+    geoUnsupported: "La ubicació no està disponible en aquest dispositiu. Escriu una adreça.",
+    locker: "Taquilla",
+    openToday: (hours: string) => `Avui · ${hours}`,
+    closedToday: "Tancat avui",
+    /** 340 m, 1,2 km… */
+    distance: (meters: number) =>
+      meters < 1000
+        ? `${Math.round(meters / 10) * 10}\u00A0m`
+        : `${new Intl.NumberFormat("ca-ES", { maximumFractionDigits: 1 }).format(meters / 1000)}\u00A0km`,
   },
 
   errors: {
@@ -189,7 +218,7 @@ export const ca: OrderDictionary = {
     fullName: "Escriu el teu nom complet.",
     phone: "Escriu un número de telèfon vàlid.",
     email: "Escriu una adreça de correu vàlida.",
-    zone: "Tria una zona i un punt de lliurament.",
+    zone: "Tria un punt de lliurament.",
     generic: "S'ha produït un error. Torna-ho a provar d'aquí a un moment.",
   },
 

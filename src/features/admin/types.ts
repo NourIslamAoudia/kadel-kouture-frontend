@@ -1,4 +1,4 @@
-import type { OrderItem } from "@features/submission/types";
+import type { OrderItem, ServicePointDto } from "@features/submission/types";
 import type { Locale } from "@features/landing/i18n/locales";
 
 export type SubmissionStatus =
@@ -20,6 +20,8 @@ export interface AdminSubmission {
   height_cm: number;
   zone: string;
   drop_off_point: string;
+  /** Point relais Sendcloud ; absent sur les commandes antérieures à l’intégration. */
+  service_point?: ServicePointDto | null;
   status: SubmissionStatus | null;
   measurements: Record<string, unknown>;
   mesh_url: string | null;

@@ -321,7 +321,22 @@ function SubmissionDetail({
         </div>
         <div>
           <dt>Point de dépôt</dt>
-          <dd>{submission.drop_off_point}</dd>
+          <dd>
+            {submission.drop_off_point}
+            {submission.service_point && (
+              <span className="admin-dd-note">
+                {[
+                  submission.service_point.houseNumber,
+                  submission.service_point.street,
+                ]
+                  .filter(Boolean)
+                  .join(" ")}
+                , {submission.service_point.postalCode}{" "}
+                {submission.service_point.city} · réf.{" "}
+                {submission.service_point.code}
+              </span>
+            )}
+          </dd>
         </div>
         {submission.total_price != null && (
           <div>

@@ -200,3 +200,20 @@ export function LockerIcon({ className }: { className?: string }) {
     </svg>
   );
 }
+
+/* ---------- Point de dépôt : boutique relais ---------- */
+
+export function ShopIcon({ className }: { className?: string }) {
+  return (
+    <svg viewBox="0 0 48 48" className={className} aria-hidden="true">
+      <path {...LINE} d="M10 20v22h28V20" />
+      <path
+        {...LINE}
+        d="M7 13 10 6h28l3 7v2.5a4.25 4.25 0 0 1-8.5 0 4.25 4.25 0 0 1-8.5 0 4.25 4.25 0 0 1-8.5 0 4.25 4.25 0 0 1-8.5 0Z"
+      />
+      <path {...STITCH} d="M7 13h34" />
+      <path {...LINE} d="M15 42V29h8v13" />
+      <path {...SOFT} d="M27 28h7v7h-7z" />
+    </svg>
+  );
+}

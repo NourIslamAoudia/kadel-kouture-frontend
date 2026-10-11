@@ -838,6 +838,14 @@ body {
   gap: 4px;
 }
 
+.admin-detail-list .admin-dd-note {
+  display: block;
+  margin-top: 3px;
+  color: var(--color-ink-3);
+  font-size: 11px;
+  text-transform: capitalize;
+}
+
 .admin-detail-list .admin-amount {
   font-family: var(--font-serif);
   font-size: 20px;
@@ -1728,5 +1736,55 @@ body {
     align-items: flex-end;
     flex-direction: column;
     gap: 5px;
+  }
+}
+
+/* ---------- Carte des points relais ---------- */
+
+.kk-map-point {
+  animation: kk-map-fade 420ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.kk-map-reach {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: kk-map-grow 560ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+}
+
+.kk-map-pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: kk-map-pulse 2.4s ease-out infinite;
+}
+
+@keyframes kk-map-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes kk-map-grow {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+}
+
+@keyframes kk-map-pulse {
+  0% {
+    opacity: 0.9;
+    transform: scale(0.5);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kk-map-point,
+  .kk-map-reach,
+  .kk-map-pulse {
+    animation: none;
   }
 }

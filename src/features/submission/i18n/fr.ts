@@ -174,11 +174,39 @@ export const fr = {
 
   zone: {
     eyebrow: "Logistique",
-    title: "Votre zone *à Barcelone*",
+    title: "Votre *point relais*",
     subtitle:
-      "Choisissez votre quartier et le point de dépôt le plus pratique.",
-    pickZone: "Choisissez votre zone",
-    dropOff: "Points de dépôt",
+      "Déposez votre vêtement près de chez vous : cherchez par adresse ou code postal, ou utilisez votre position.",
+    searchLabel: "Adresse ou code postal",
+    searchPlaceholder: "Ex. : 75004, Paris",
+    search: "Rechercher",
+    useLocation: "Utiliser ma position",
+    locating: "Localisation…",
+    tooShort: "Saisissez au moins 3 caractères.",
+    dropOff: "Points relais",
+    selected: "Point choisi",
+    yourPosition: "Vous",
+    yourAddress: "Votre adresse",
+    mapHint:
+      "Cherchez une adresse ou utilisez votre position pour voir les points relais autour de vous.",
+    loading: "Recherche des points relais…",
+    error: "Impossible de charger les points relais.",
+    retry: "Réessayer",
+    notFound: "Adresse introuvable. Vérifiez-la ou utilisez votre position.",
+    empty:
+      "Aucun point relais trouvé près de cette adresse. Le service est disponible en France.",
+    geoDenied: "Autorisez la localisation dans votre navigateur ou saisissez une adresse.",
+    geoUnavailable: "Votre position est indisponible pour le moment. Saisissez une adresse.",
+    geoTimeout: "La localisation a pris trop de temps. Réessayez ou saisissez une adresse.",
+    geoUnsupported: "La localisation n'est pas disponible sur cet appareil. Saisissez une adresse.",
+    locker: "Consigne",
+    openToday: (hours: string) => `Aujourd'hui · ${hours}`,
+    closedToday: "Fermé aujourd'hui",
+    /** 340 m, 1,2 km… */
+    distance: (meters: number) =>
+      meters < 1000
+        ? `${Math.round(meters / 10) * 10}\u00A0m`
+        : `${new Intl.NumberFormat("fr-FR", { maximumFractionDigits: 1 }).format(meters / 1000)}\u00A0km`,
   },
 
   errors: {
@@ -193,7 +221,7 @@ export const fr = {
     fullName: "Saisissez votre nom complet.",
     phone: "Saisissez un numéro de téléphone valide.",
     email: "Saisissez une adresse email valide.",
-    zone: "Choisissez une zone et un point de dépôt.",
+    zone: "Choisissez un point relais.",
     generic: "Une erreur est survenue. Réessayez dans un instant.",
   },
 

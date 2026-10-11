@@ -18,6 +18,7 @@ import type {
   WorkType,
   SilhouetteModel,
   OrderItem,
+  ServicePointDto,
 } from "../types";
 import type { ExtractionResponse } from "@features/measurements/types";
 import {
@@ -108,9 +109,11 @@ export default function OrderFlow({
     comment: "",
   });
 
-  // Étape zone
-  const [zone, setZone] = useState<string | null>(null);
-  const [dropOffPoint, setDropOffPoint] = useState<string | null>(null);
+  // Étape point relais
+  // Point relais Sendcloud choisi : l’objet complet est envoyé et revalidé par le backend.
+  const [dropOffPoint, setDropOffPoint] = useState<ServicePointDto | null>(
+    null,
+  );
   const [photoResult, setPhotoResult] = useState<ExtractionResponse | null>(
     null,
   );
@@ -173,7 +176,7 @@ export default function OrderFlow({
         return t.errors.email;
       }
     }
-    if (step === "zone" && (!zone || !dropOffPoint)) {
+    if (step === "zone" && !dropOffPoint) {
       return t.errors.zone;
     }
     return null;
@@ -301,8 +304,8 @@ export default function OrderFlow({
         measurements:
           method === "photo" ? getSummaryMeasurements(photoResult!) : manual,
         mesh_url: photoResult?.mesh_url ?? null,
-        zone: zone!,
-        drop_off_point: dropOffPoint!,
+        drop_off_point: dropOffPoint!.name,
+        service_point: dropOffPoint!,
       });
       setStep("done");
     } catch (err) {
@@ -428,12 +431,7 @@ export default function OrderFlow({
 
           {step === "zone" && (
             <ZoneDropoffStep
-              zone={zone}
               dropOffPoint={dropOffPoint}
-              onZoneChange={(z) => {
-                setZone(z);
-                setDropOffPoint(null);
-              }}
               onDropOffChange={setDropOffPoint}
             />
           )}
