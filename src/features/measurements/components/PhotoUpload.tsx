@@ -189,7 +189,7 @@ export default function PhotoUpload({
   const example =
     gender === "female"
       ? { src: "/demo-2.jpg", label: t.upload.exampleFemale }
-      : { src: "/demo-1.png", label: t.upload.exampleMale };
+      : { src: "/demo-1.jpg", label: t.upload.exampleMale };
   return (
     <div className="photo-upload">
       <div className="upload-intro">
