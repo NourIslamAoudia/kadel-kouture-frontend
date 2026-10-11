@@ -1,6 +1,6 @@
 "use client";
 
-import Image from "next/image";
+import { getImageProps } from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cx } from "../lib/cx";
 
@@ -9,16 +9,27 @@ const SCENE_SECONDS = 5;
 /** Le poster correspond à cette seconde : le passage du poster à la vidéo est invisible. */
 const START_AT = 1;
 
-/** Grand écran : version agrandie (lanczos) et affinée. Mobile et tablette : le fichier d'origine, plus léger. */
+/**
+ * Téléphone : version verticale (kouture-phone), mêmes scènes, mêmes temps.
+ * Tablette : version paysage d'origine. Grand écran : version paysage agrandie et affinée.
+ */
 const SOURCES = {
-  large: [{ src: "/media/kadel-hero-hd.mp4", type: "video/mp4" }],
-  small: [
+  phone: [
+    { src: "/media/kouture-phone.webm", type: "video/webm" },
+    { src: "/media/kouture-phone.mp4", type: "video/mp4" },
+  ],
+  tablet: [
     { src: "/media/kadel-hero.webm", type: "video/webm" },
     { src: "/media/kadel-hero.mp4", type: "video/mp4" },
   ],
+  large: [{ src: "/media/kadel-hero-hd.mp4", type: "video/mp4" }],
 };
 
+/** Même seuil que la mise en page du hero (md : 768 px). */
+const PHONE_QUERY = "(max-width: 767px)";
+
 const HERO_POSTER = "/media/kadel-hero-poster.jpg";
+const PHONE_POSTER = "/media/kouture-phone-poster.jpg";
 
 interface HeroVideoProps {
   label: string;
@@ -51,8 +62,12 @@ export function HeroVideo({
     const video = videoRef.current;
     if (!video || loaded.current) return video;
     loaded.current = true;
-    const large = window.matchMedia("(min-width: 1024px)").matches;
-    for (const source of large ? SOURCES.large : SOURCES.small) {
+    const sources = window.matchMedia(PHONE_QUERY).matches
+      ? SOURCES.phone
+      : window.matchMedia("(min-width: 1024px)").matches
+        ? SOURCES.large
+        : SOURCES.tablet;
+    for (const source of sources) {
       const element = document.createElement("source");
       element.src = source.src;
       element.type = source.type;
@@ -132,17 +147,41 @@ export function HeroVideo({
     }
   };
 
+  const {
+    props: landscapePoster,
+  } = getImageProps({
+    src: HERO_POSTER,
+    alt: "",
+    fill: true,
+    priority: true,
+    sizes: "100vw",
+  });
+  const {
+    props: { srcSet: phoneSrcSet, sizes: phoneSizes },
+  } = getImageProps({
+    src: PHONE_POSTER,
+    alt: "",
+    fill: true,
+    priority: true,
+    sizes: "100vw",
+  });
+  const phonePoster = { srcSet: phoneSrcSet, sizes: phoneSizes };
+
   return (
     <>
-      <Image
-        src={HERO_POSTER}
-        alt=""
-        fill
-        priority
-        sizes="100vw"
-        quality={80}
-        className="object-cover"
-      />
+      {/* Image de départ : verticale sur téléphone, paysage ailleurs (une seule est téléchargée). */}
+      <picture>
+        <source
+          media={PHONE_QUERY}
+          srcSet={phonePoster.srcSet}
+          sizes={phonePoster.sizes}
+        />
+        <img
+          {...landscapePoster}
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      </picture>
       <video
         ref={videoRef}
         muted

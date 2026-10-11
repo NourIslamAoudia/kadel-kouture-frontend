@@ -1,20 +1,17 @@
 import { AnnouncementBar } from "./components/AnnouncementBar";
-import { Ateliers } from "./components/Ateliers";
-import { Brands } from "./components/Brands";
 import { Faq } from "./components/Faq";
 import { FinalCta } from "./components/FinalCta";
 import { Footer } from "./components/Footer";
 import { Founder } from "./components/Founder";
-import { Guarantee } from "./components/Guarantee";
 import { Header } from "./components/Header";
 import { Hero } from "./components/Hero";
 import { HowItWorks } from "./components/HowItWorks";
-import { JoinAteliers } from "./components/JoinAteliers";
-import { ProblemSolution } from "./components/ProblemSolution";
+import { Professionals } from "./components/Professionals";
 import { Services } from "./components/Services";
 import { StickyCta } from "./components/StickyCta";
 import { Story } from "./components/Story";
 import { Transformations } from "./components/Transformations";
+import { Trust } from "./components/Trust";
 import type { LandingDictionary } from "./i18n/fr";
 import type { Locale } from "./i18n/locales";
 import { RevealObserver } from "./motion/RevealObserver";
@@ -45,17 +42,14 @@ export function LandingPage({ locale, t, offer }: LandingPageProps) {
       <main id="content" className="overflow-x-clip">
         <Hero t={t} />
         <Story t={t} locale={locale} />
-        <ProblemSolution t={t} locale={locale} />
         <HowItWorks t={t} />
         <Services copy={t.services} locale={locale} />
         <Transformations t={t} />
-        <Ateliers t={t} />
+        <Trust t={t} />
         <Founder t={t} />
-        <Guarantee t={t} />
         <Faq copy={t.faq} />
         <FinalCta t={t} locale={locale} offer={offer} />
-        <JoinAteliers t={t} />
-        <Brands t={t} />
+        <Professionals t={t} />
       </main>
       <Footer t={t} locale={locale} />
       <StickyCta cta={t.sticky.cta} note={t.sticky.note} />

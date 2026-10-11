@@ -12,6 +12,8 @@ export const en = {
 
   skip: "Skip to content",
 
+  carousel: { prev: "Previous", next: "Next" },
+
   announcement: {
     offer: "Founder offer — {discount}% off your first order",
     offerShort: "Founder offer: {discount}% off",

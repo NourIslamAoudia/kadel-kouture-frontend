@@ -23,7 +23,7 @@ export function Founder({ t }: { t: LandingDictionary }) {
             <EditorialImage
               src="/media/scene-mali-or.jpg"
               alt={copy.imageAlt}
-              ratio="4 / 5"
+              ratio="1 / 1"
               focus="54% 42%"
               sizes="(min-width: 768px) 40vw, 100vw"
             />
@@ -68,7 +68,7 @@ export function Founder({ t }: { t: LandingDictionary }) {
           </div>
         </div>
 
-        <div className="mt-24 flex items-center gap-6 lg:mt-32">
+        <div className="mt-14 flex items-center gap-6 lg:mt-20">
           <BogolanBand className="kk-bogolan flex-1" />
           <p className="kk-caps shrink-0 text-kk-ivory/65">
             {copy.secondaryCaption}

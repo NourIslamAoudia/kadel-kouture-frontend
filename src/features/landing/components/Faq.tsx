@@ -11,6 +11,9 @@ import { SectionLabel } from "./ui";
  * lisibles par les moteurs de recherche et les lecteurs d'écran.
  * La hauteur s'anime en CSS (grid-template-rows 0fr → 1fr).
  */
+/** Les 6 questions essentielles (cahier des charges : 6 à 8). */
+const FAQ_COUNT = 6;
+
 export function Faq({ copy }: { copy: LandingDictionary["faq"] }) {
   const [open, setOpen] = useState<number | null>(0);
 
@@ -34,7 +37,7 @@ export function Faq({ copy }: { copy: LandingDictionary["faq"] }) {
         </div>
 
         <ul className="border-b border-kk-ink/15 lg:col-span-7 lg:col-start-6">
-          {copy.items.map((item, index) => {
+          {copy.items.slice(0, FAQ_COUNT).map((item, index) => {
             const isOpen = open === index;
             const panelId = `faq-panel-${index}`;
             const buttonId = `faq-button-${index}`;

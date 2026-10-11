@@ -12,6 +12,8 @@ export const ca = {
 
   skip: "Ves al contingut",
 
+  carousel: { prev: "Anterior", next: "Següent" },
+
   announcement: {
     offer: "Oferta fundador — −{discount} % a la teva primera comanda",
     offerShort: "Oferta fundador: −{discount} %",

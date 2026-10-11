@@ -36,12 +36,12 @@ export function FinalCta({
             lineClassNames={[undefined, "md:pl-[8%]"]}
           />
 
-          <div className="mt-16 grid gap-12 md:mt-24 md:grid-cols-12 md:items-end md:gap-x-6 lg:gap-x-10">
+          <div className="mt-10 grid gap-10 md:mt-14 md:grid-cols-12 md:items-end md:gap-x-6 lg:gap-x-10">
             <figure className="md:col-span-5">
               <EditorialImage
                 src="/media/scene-barcelona.jpg"
                 alt={copy.imageAlt}
-                ratio="4 / 5"
+                ratio="16 / 10"
                 focus="42% 40%"
                 sizes="(min-width: 768px) 40vw, 100vw"
               />

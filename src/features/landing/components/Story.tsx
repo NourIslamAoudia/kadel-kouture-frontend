@@ -34,12 +34,12 @@ export function Story({ t, locale }: { t: LandingDictionary; locale: Locale }) {
           lineClassNames={[undefined, "md:pl-[10%]"]}
         />
 
-        <div className="mt-16 grid gap-14 md:mt-24 md:grid-cols-12 md:gap-x-6">
+        <div className="mt-10 grid gap-10 md:mt-14 md:grid-cols-12 md:items-center md:gap-x-6">
           <figure className="md:col-span-6 lg:col-span-5">
             <EditorialImage
               src="/media/scene-paris.jpg"
               alt={story.imageAlt}
-              ratio="4 / 5"
+              ratio="5 / 4"
               focus="30% 50%"
               sizes="(min-width: 1024px) 40vw, (min-width: 768px) 50vw, 100vw"
             />

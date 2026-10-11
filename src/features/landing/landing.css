@@ -33,6 +33,15 @@
     text-rendering: optimizeLegibility;
   }
 
+  /* Pas de curseur de saisie sur les textes (navigation au curseur, F7) ; il reste dans les champs. */
+  .kk-site {
+    caret-color: transparent;
+  }
+
+  .kk-site :is(input, textarea, select, [contenteditable="true"]) {
+    caret-color: auto;
+  }
+
   .kk-site ::selection {
     background: var(--kk-ink);
     color: var(--kk-ivory);
@@ -64,7 +73,7 @@
 
   .kk-section {
     position: relative;
-    padding-block: clamp(88px, 11vw, 168px);
+    padding-block: clamp(64px, 7.5vw, 112px);
   }
 
   .kk-rule {
@@ -297,6 +306,22 @@
 
   .kk-on-dark .kk-bogolan {
     color: rgb(213 198 178 / 40%);
+  }
+
+  /* ---------- Rangées horizontales ---------- */
+
+  .kk-hscroll {
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+  }
+
+  .kk-hscroll::-webkit-scrollbar {
+    display: none;
+  }
+
+  .kk-hscroll > li {
+    scroll-snap-align: start;
+    flex: none;
   }
 
   /* ---------- Images : conteneur du rideau ---------- */
