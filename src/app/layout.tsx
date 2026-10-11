@@ -25,7 +25,14 @@ export const metadata: Metadata = {
   title: "Kadel Kouture",
   description:
     "Réparation, retouche et personnalisation de vêtements par des couturiers de Barcelone.",
-  icons: { icon: "/favicon.svg" },
+  // Monogramme KK : SVG pour les navigateurs, PNG pour les écrans d'accueil (iOS, Android).
+  icons: {
+    icon: [
+      { url: "/favicon.svg", type: "image/svg+xml" },
+      { url: "/icon-192.png", type: "image/png", sizes: "192x192" },
+    ],
+    apple: "/apple-touch-icon.png",
+  },
 };
 
 export default function RootLayout({

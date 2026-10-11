@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 28 28" width="280" height="280">
+  <title>Kadel Kouture</title>
+  <g fill="none" stroke="#FFFFFF">
+    <path d="M4 4v20M24 4v20" stroke-width="1.5"/>
+    <path d="M4 14 13 4M4 14l9 10M24 14 15 4m9 10-9 10" stroke-width="1.2"/>
+  </g>
+  <circle cx="14" cy="14" r="1.1" fill="#FFFFFF"/>
+</svg>
